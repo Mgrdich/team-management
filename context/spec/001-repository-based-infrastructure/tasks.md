@@ -180,38 +180,42 @@ Enable users to remove team members with the `/remove-team-member` command.
 
 Enable users to import team members from Slack channels with the `/import-slack-channel` command.
 
-- [ ] **Create `/import-slack-channel` skill**
-  - [ ] Create `.claude/commands/import-slack-channel.md` skill file
-  - [ ] Add frontmatter with description: "Import team members from Slack channel"
-  - [ ] Document usage: `/import-slack-channel --team=[team-id]`
-  - [ ] Document parameters: `--team` (required)
-  - [ ] Document behavior:
+- [x] **Create `/import-slack-channel` skill**
+  - [x] Create `.claude/skills/import-slack-channel/SKILL.md` skill file
+  - [x] Add frontmatter with description: "Import team members from Slack channel via MCP"
+  - [x] Document usage: `/import-slack-channel --team=[team-id]`
+  - [x] Document parameters: `--team` (required)
+  - [x] Document behavior:
     - Validates team exists
-    - Checks if Slack MCP is available; if not, shows error: "Slack MCP not configured. See docs/setup-slack.md"
-    - Uses AskUserQuestion to get channel search keyword
+    - Checks if Slack MCP is available; if not, shows error: "Slack MCP not configured. See docs/setup-slack-mcp.md"
+    - Asks for channel search keyword in plain text
     - Calls Slack MCP: `conversations.list` to search channels
-    - Presents channel options using AskUserQuestion (show name, member count, description)
+    - Uses AskUserQuestion tool to present channel options (show name, member count, description)
+    - Provides "Cancel" option during channel selection
     - After selection, calls Slack MCP: `conversations.members` to get member IDs
     - For each member, calls Slack MCP: `users.info` to get profile (name, email, role)
     - Generates member IDs using bash utility
-    - Builds member JSON objects with source: "slack_import"
-    - Calls `json-utils.sh append_members` to add all (skips duplicates by email)
-    - Displays summary: "Imported X members from #channel-name (Y duplicates skipped)"
-  - [ ] Add examples section
-  - [ ] Document error handling for missing MCP
-  - [ ] **[Agent: general-purpose]**
+    - Builds member JSON objects with source: "slack_import" and slack_user_id field
+    - Calls `json-utils.sh append_member` in loop (skips duplicates by email)
+    - Tracks: total users, imported, duplicates, no-email
+    - Displays summary: "Imported X members from #channel-name (Y duplicates skipped, Z no email)"
+  - [x] Add examples section (5 scenarios including MCP not configured, cancel, duplicates)
+  - [x] Document error handling for missing MCP
+  - [x] Document performance considerations for large channels (50+ members)
+  - [x] **[Agent: general-purpose]**
 
 - [ ] **Test Slack import (requires Slack MCP)**
-  - [ ] Verify Slack MCP is configured (check `.claude/mcp.json` or show error)
-  - [ ] Run `/import-slack-channel --team=test-team`
+  - [ ] **BLOCKED: Slack MCP not configured yet (see Phase 3 roadmap)**
+  - [ ] Verify Slack MCP is configured (check for Slack MCP tools availability)
+  - [ ] Run `/import-slack-channel --team=team-alpha`
   - [ ] Enter search keyword for a test Slack channel
-  - [ ] Select channel from presented options
-  - [ ] Wait for import to complete
-  - [ ] Verify members.json populated with Slack members (name, email, role, source: "slack_import")
-  - [ ] Verify summary shows number imported and duplicates skipped
-  - [ ] Re-import same channel: verify all marked as duplicates
+  - [ ] Select channel from presented options via AskUserQuestion
+  - [ ] Wait for import to complete (observe progress for large channels)
+  - [ ] Verify members.json populated with Slack members (name, email, role, source: "slack_import", slack_user_id)
+  - [ ] Verify summary shows: total, imported, duplicates, no-email counts
+  - [ ] Re-import same channel: verify all marked as duplicates (0 imported)
   - [ ] **[Agent: general-purpose]**
-  - [ ] **Note: Requires Slack MCP configured - if not available, document manual testing steps**
+  - [ ] **Note: Testing deferred until Phase 3 (MCP Configuration & Setup) is complete**
 
 ---
 
