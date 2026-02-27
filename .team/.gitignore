@@ -1,0 +1,15 @@
+# Ignore temporary and backup files
+*.backup
+*.temp
+*.tmp
+.temp
+.backup/
+
+# Ignore logs if added later
+logs/
+*.log
+
+# But DO track team data files
+!*/members.json
+!*/projects.json
+!*/team-config.json
