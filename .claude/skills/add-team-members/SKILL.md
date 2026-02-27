@@ -150,6 +150,17 @@ If GitLab MCP is available:
 
 If GitLab MCP is not available:
 
+**Error Handling:**
+- If GitLab MCP is not available, display error:
+  ```
+  Error: GitLab MCP not configured.
+
+  To use this feature, configure GitLab MCP integration.
+  See documentation: docs/setup-gitlab-mcp.md
+
+  GitLab auto-detection unavailable. You can manually enter Git information.
+  ```
+
 **Use the `AskUserQuestion` tool**:
 ```
 AskUserQuestion parameters:

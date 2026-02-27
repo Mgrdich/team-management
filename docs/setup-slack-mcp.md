@@ -48,70 +48,102 @@ The Slack MCP integration enables:
 
 ## Step 4: Configure Slack MCP
 
-Create or update your MCP configuration file:
+Configure the MCP integration using a repository-local configuration file:
 
-**Location:** `~/.claude/mcp.json` (or project-specific `.claude/mcp.json`)
+**Location:** `.mcp.json` in the repository root
 
-**Add Slack MCP configuration:**
+**Setup Instructions:**
+
+1. Copy the example configuration:
+   ```bash
+   cp mcp-config-example.json .mcp.json
+   ```
+
+2. Edit `.mcp.json` and replace the Slack placeholders:
+   - Replace `YOUR_SLACK_BOT_TOKEN_HERE` with your Bot User OAuth Token from Step 3
+   - Replace `YOUR_SLACK_TEAM_ID_HERE` with your Slack workspace Team ID
+
+3. Verify `.mcp.json` is gitignored:
+   ```bash
+   git check-ignore .mcp.json  # Should output: .mcp.json
+   ```
+
+**Finding Your Slack Team ID:**
+
+Your Team ID can be found in several ways:
+- In Slack web app: Click workspace name → Settings & Administration → Workspace Settings (URL contains Team ID)
+- In your Slack app settings at [https://api.slack.com/apps](https://api.slack.com/apps) under "App Credentials"
+- Via API: `https://slack.com/api/auth.test` with your bot token
+
+**Example `.mcp.json` configuration:**
 
 ```json
 {
   "mcpServers": {
     "slack": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-slack",
-        "--token",
-        "YOUR_BOT_TOKEN_HERE"
-      ]
-    }
-  }
-}
-```
-
-**Replace `YOUR_BOT_TOKEN_HERE`** with your Bot User OAuth Token from Step 3.
-
-**Alternative: Environment Variable**
-
-For better security, use an environment variable:
-
-```json
-{
-  "mcpServers": {
-    "slack": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-slack",
-        "--token"
-      ],
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
       "env": {
-        "SLACK_BOT_TOKEN": "YOUR_BOT_TOKEN_HERE"
+        "SLACK_BOT_TOKEN": "xoxb-your-actual-token-here",
+        "SLACK_TEAM_ID": "T01234ABCDE"
       }
     }
   }
 }
 ```
 
-Or set in your shell profile:
+**Security Note:** The `.mcp.json` file is automatically gitignored to prevent credential leaks. Never commit this file to version control.
+
+## Step 5: Manual Testing
+
+After configuring `.mcp.json`, verify the setup is correct:
+
+### 5.1 Configuration Validation
+
+Run these commands to verify your configuration:
+
 ```bash
-export SLACK_BOT_TOKEN="xoxb-your-token-here"
+# Verify .mcp.json file exists
+ls -la .mcp.json
+
+# Verify it's gitignored (prevents accidental commits)
+git check-ignore .mcp.json  # Should output: .mcp.json
+
+# Verify JSON syntax is valid
+cat .mcp.json | jq .  # Should parse without errors
 ```
 
-## Step 5: Verify Installation
-
-Restart Claude Code and verify Slack MCP is loaded:
-
+If `jq` is not installed, you can use Python instead:
 ```bash
-# Check if Slack tools are available
-# Slack MCP should provide tools like:
-# - conversations.list
-# - conversations.members
-# - users.info
+python3 -c "import json; json.load(open('.mcp.json'))" && echo "Valid JSON"
 ```
 
-Test the `/import-slack-channel` skill to verify it works.
+### 5.2 Slack MCP Connection Test
+
+Test the Slack MCP integration to ensure it's working:
+
+1. **Restart Claude Code** in the repository directory to load `.mcp.json`
+   ```bash
+   cd /path/to/team-management
+   claude
+   ```
+
+2. **Run the import skill** with any team name:
+   ```
+   /import-slack-channel --team=test-team
+   ```
+
+3. **Enter a channel search keyword** when prompted (e.g., "general")
+
+4. **Verify the results:**
+   - Claude should list Slack channels matching your search
+   - If successful, the Slack MCP connection is working correctly
+   - You can cancel the import after verification (Ctrl+C)
+
+5. **Check for errors:**
+   - If you see "Slack MCP not configured", check your `.mcp.json` file location and syntax
+   - If you see authentication errors, verify your bot token and team ID
+   - If you see permission errors, check OAuth scopes in Step 2
 
 ## Step 6: Invite Bot to Channels
 
@@ -127,45 +159,117 @@ For the bot to access channel members, invite it to the channels you want to imp
 
 ### "Slack MCP not configured" Error
 
-- Verify `mcp.json` exists at `~/.claude/mcp.json`
-- Check that the Slack MCP entry is correct
-- Restart Claude Code after modifying `mcp.json`
+**Symptoms:**
+- Error message when running `/import-slack-channel`
+- Claude cannot find Slack MCP tools
+
+**Solutions:**
+- Verify `.mcp.json` exists in the repository root (not `~/.claude/mcp.json`)
+- Check that the file contains the `slack` entry under `mcpServers`
+- Verify JSON syntax is valid using `cat .mcp.json | jq .`
+- Restart Claude Code after modifying `.mcp.json`
+- Ensure you're running Claude Code from the repository directory
+
+### Bot Token Errors
+
+**Symptoms:**
+- "Invalid authentication" or "invalid_auth" errors
+- 401 Unauthorized responses
+- "Token revoked" messages
+
+**Solutions:**
+- Verify your bot token in `.mcp.json` starts with `xoxb-`
+- Check for extra spaces or quotes around the token
+- Regenerate the bot token in Slack app settings
+- Ensure the token hasn't been revoked
+- Verify the bot is still installed to the workspace
+
+### Team ID Issues
+
+**Symptoms:**
+- "Team not found" errors
+- Cannot list channels or users
+- MCP connection fails silently
+
+**Solutions:**
+- Verify your Team ID in `.mcp.json` (format: `T01234ABCDE`)
+- Check Team ID in Slack workspace settings URL
+- Use the correct Team ID for your workspace (not channel ID)
+- Ensure the bot token belongs to the specified team
 
 ### "Permission Denied" Errors
 
-- Verify your bot has all required OAuth scopes
-- Reinstall the app to workspace if you added new scopes
-- Ensure bot is invited to the channel
+**Symptoms:**
+- "missing_scope" error messages
+- Cannot access channel members
+- Cannot read user information
+
+**Solutions:**
+- Verify your bot has all required OAuth scopes (see Step 2)
+- Go to Slack app settings → OAuth & Permissions → Bot Token Scopes
+- Add any missing scopes: `channels:read`, `groups:read`, `users:read`, `users:read.email`
+- **Reinstall the app to workspace** after adding new scopes
+- Ensure bot is invited to the channel (`/invite @Team Management Bot`)
 
 ### No Email Addresses Found
 
+**Symptoms:**
+- Team members imported without email addresses
+- Email field is empty in member profiles
+
+**Solutions:**
 - Verify `users:read.email` scope is enabled
 - Check Slack workspace settings allow email visibility
-- Some users may have hidden their email addresses
+- Some users may have hidden their email addresses (workspace setting)
+- Workspace admins can control email visibility in Slack settings
 
 ### "Channel Not Found"
 
-- Ensure bot is invited to private channels
-- Verify channel name spelling
+**Symptoms:**
+- Cannot find channel by name
+- Empty channel list returned
+
+**Solutions:**
+- Ensure bot is invited to private channels (`/invite @Team Management Bot`)
+- Verify channel name spelling (try partial matches)
 - Check that channel hasn't been archived
+- Use channel ID instead of name if issues persist
+- Verify bot has `groups:read` scope for private channels
+
+### JSON Parsing Errors
+
+**Symptoms:**
+- "Invalid JSON" or syntax errors
+- `.mcp.json` fails validation
+
+**Solutions:**
+- Use `cat .mcp.json | jq .` to identify syntax errors
+- Check for missing commas, quotes, or braces
+- Compare with `mcp-config-example.json` for correct format
+- Use a JSON validator or editor with syntax highlighting
+- Ensure no trailing commas after last object properties
 
 ## Security Best Practices
 
 1. **Never commit tokens to git**
-   - Add `.claude/mcp.json` to `.gitignore` if storing tokens there
-   - Use environment variables for tokens
+   - `.mcp.json` is automatically gitignored in this repository
+   - Verify with: `git check-ignore .mcp.json`
+   - Never commit credentials to version control
 
 2. **Rotate tokens regularly**
    - Generate new bot tokens periodically
    - Revoke old tokens in Slack app settings
+   - Update `.mcp.json` with new tokens
 
 3. **Limit bot permissions**
    - Only add OAuth scopes you actually need
    - Review bot activity in Slack audit logs
+   - Remove unused scopes to minimize risk
 
 4. **Share responsibly**
    - Don't share bot tokens via email or chat
    - Use secure secret management for team environments
+   - Each team member should create their own `.mcp.json`
 
 ## Additional Resources
 

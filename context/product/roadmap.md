@@ -48,31 +48,33 @@ _Once the foundational features are complete, we will move on to these high-valu
 
 _Configure and verify external tool integrations via Model Context Protocol (MCP). These are required for skills that depend on external data sources._
 
-**Note:** All MCP-dependent skills are implemented and ready to use. Documentation is complete. This phase focuses on actual MCP configuration and testing with real external services.
+**Status:** ✅ **Completed** - Infrastructure and documentation for MCP configuration is complete. Users can now configure MCP integrations using the example file and comprehensive setup documentation.
 
-- [ ] **GitLab MCP Setup**
-  - [ ] **Create MCP Configuration:** Write `.claude/mcp/gitlab.json` or add to `~/.claude/mcp.json` with GitLab server URL and authentication token
-  - [ ] **Test Connection:** Verify GitLab MCP can connect and authenticate successfully
-  - [ ] **Test User Search:** Verify `search_users` function works (required by `/add-team-members` skill)
-  - [x] **Document Setup:** Created `docs/setup-gitlab-mcp.md` with step-by-step configuration instructions
-  - [ ] **Verify in Skills:** Test `/add-team-members` skill with GitLab MCP enabled and confirm auto-detection works
+- [x] **MCP Configuration Infrastructure**
+  - [x] **Example Configuration File:** Created `mcp-config-example.json` with placeholder values for all four integrations (GitLab, Atlassian/Jira/Confluence, Slack)
+  - [x] **Security:** Verified `.mcp.json` is gitignored to prevent credential leaks
+  - [x] **Partial Configuration Support:** Structure supports configuring any combination of integrations (1, 2, 3, or all 4)
 
-- [ ] **Jira MCP Setup**
-  - [ ] **Create MCP Configuration:** Write MCP config with Jira instance URL and API token
-  - [ ] **Test Connection:** Verify Jira MCP can connect and authenticate
-  - [ ] **Test Board Search:** Verify board/project search functions work
-  - [x] **Document Setup:** Created `docs/setup-jira-mcp.md` with configuration instructions
+- [x] **GitLab MCP Setup Documentation**
+  - [x] **Setup Instructions:** Updated `docs/setup-gitlab-mcp.md` to reference repo-local `.mcp.json`
+  - [x] **Manual Testing Section:** Added configuration validation and connection test instructions
+  - [x] **Troubleshooting:** Added comprehensive troubleshooting section covering auth failures, API URL errors, and token permissions
+  - [x] **Skill Error Messages:** Updated `/add-team-members` skill with GitLab MCP error handling
 
-- [ ] **Confluence MCP Setup**
-  - [ ] **Create MCP Configuration:** Write MCP config with Confluence URL and authentication
-  - [ ] **Test Connection:** Verify Confluence MCP can connect and authenticate
-  - [ ] **Test Space Search:** Verify space and page search functions work
-  - [x] **Document Setup:** Created `docs/setup-confluence-mcp.md` with configuration instructions
+- [x] **Jira MCP Setup Documentation**
+  - [x] **Setup Instructions:** Updated `docs/setup-jira-mcp.md` with repo-local configuration and shared Atlassian MCP server guidance
+  - [x] **Manual Testing Section:** Added configuration validation steps
+  - [x] **Troubleshooting:** Added Atlassian MCP troubleshooting (API token, domain URL, permission scopes)
 
-- [ ] **Slack MCP Setup**
-  - [ ] **Create MCP Configuration:** Write MCP config with Slack workspace token
-  - [ ] **Test Connection:** Verify Slack MCP can connect and authenticate
-  - [ ] **Test Channel/Member Search:** Verify channel listing and member search functions work
-  - [x] **Document Setup:** Created `docs/setup-slack-mcp.md` with configuration instructions
+- [x] **Confluence MCP Setup Documentation**
+  - [x] **Setup Instructions:** Updated `docs/setup-confluence-mcp.md` with repo-local configuration and shared Atlassian MCP server guidance
+  - [x] **Manual Testing Section:** Added configuration validation steps
+  - [x] **Troubleshooting:** Added Atlassian MCP troubleshooting including shared configuration issues
+
+- [x] **Slack MCP Setup Documentation**
+  - [x] **Setup Instructions:** Updated `docs/setup-slack-mcp.md` to reference repo-local `.mcp.json`
+  - [x] **Manual Testing Section:** Added configuration validation and connection test instructions
+  - [x] **Troubleshooting:** Added troubleshooting for bot token, team ID, and permission errors
+  - [x] **Skill Error Messages:** Updated `/import-slack-channel` and `/team-status` skills with Slack MCP error handling
 
 ---

@@ -15,6 +15,8 @@ The Jira MCP (or Atlassian MCP) integration enables:
 - Searching and selecting Jira boards by keyword
 - Tracking Jira board IDs for future sync features
 
+**Important:** Jira and Confluence both use the same `atlassian` MCP server configuration. If you've already configured Confluence MCP, your Jira integration is already set up and you can skip to the verification steps.
+
 ## Step 1: Create Jira API Token
 
 ### For Jira Cloud:
@@ -38,11 +40,32 @@ You'll need:
 
 ## Step 3: Configure Jira MCP
 
-Create or update your MCP configuration file:
+### Using the Example Configuration
 
-**Location:** `~/.claude/mcp.json` (or project-specific `.claude/mcp.json`)
+This project includes an example MCP configuration file to help you get started:
 
-**Add Jira/Atlassian MCP configuration:**
+1. **Copy the example configuration:**
+   ```bash
+   cp mcp-config-example.json .mcp.json
+   ```
+
+2. **Edit `.mcp.json`** and replace the placeholders in the `atlassian` server section:
+   - `YOUR_JIRA_URL` - Your Jira site URL (e.g., `https://your-company.atlassian.net`)
+   - `YOUR_JIRA_EMAIL` - Your Jira email address
+   - `YOUR_JIRA_API_TOKEN` - Your API token from Step 1
+
+3. **Verify `.mcp.json` is gitignored:**
+   ```bash
+   git check-ignore .mcp.json  # Should output: .mcp.json
+   ```
+
+**Important:** The `.mcp.json` file is already in `.gitignore` to prevent accidentally committing credentials.
+
+### Configuration Location
+
+**Location:** `.mcp.json` in the repository root (repo-local configuration)
+
+The configuration uses the `atlassian` MCP server, which provides both Jira and Confluence integration:
 
 ```json
 {
@@ -57,12 +80,20 @@ Create or update your MCP configuration file:
         "--jira-email",
         "your-email@example.com",
         "--jira-token",
+        "YOUR_API_TOKEN",
+        "--confluence-url",
+        "https://your-company.atlassian.net/wiki",
+        "--confluence-email",
+        "your-email@example.com",
+        "--confluence-token",
         "YOUR_API_TOKEN"
       ]
     }
   }
 }
 ```
+
+**Note:** Jira and Confluence typically share the same credentials when using Atlassian Cloud.
 
 **Replace:**
 - `your-company.atlassian.net` with your Jira site URL
@@ -85,7 +116,10 @@ For better security, use environment variables:
       "env": {
         "JIRA_URL": "https://your-company.atlassian.net",
         "JIRA_EMAIL": "your-email@example.com",
-        "JIRA_TOKEN": "YOUR_API_TOKEN"
+        "JIRA_TOKEN": "YOUR_API_TOKEN",
+        "CONFLUENCE_URL": "https://your-company.atlassian.net/wiki",
+        "CONFLUENCE_EMAIL": "your-email@example.com",
+        "CONFLUENCE_TOKEN": "YOUR_API_TOKEN"
       }
     }
   }
@@ -97,23 +131,68 @@ Or set in your shell profile:
 export JIRA_URL="https://your-company.atlassian.net"
 export JIRA_EMAIL="your-email@example.com"
 export JIRA_TOKEN="your-api-token"
+export CONFLUENCE_URL="https://your-company.atlassian.net/wiki"
+export CONFLUENCE_EMAIL="your-email@example.com"
+export CONFLUENCE_TOKEN="your-api-token"
 ```
 
-## Step 4: Verify Installation
+## Step 4: Manual Testing
 
-Restart Claude Code and verify Jira/Atlassian MCP is loaded:
+Before using the Jira integration, verify your configuration is valid:
+
+### 1. Verify Configuration File Exists
+```bash
+# Check that .mcp.json exists in repository root
+ls -la .mcp.json
+```
+
+Expected output: Should show the `.mcp.json` file with appropriate permissions.
+
+### 2. Verify Gitignore Protection
+```bash
+# Verify the file is gitignored to prevent committing credentials
+git check-ignore .mcp.json
+```
+
+Expected output: `.mcp.json` (confirms the file is properly ignored)
+
+### 3. Verify JSON Syntax
+```bash
+# Validate JSON is properly formatted
+cat .mcp.json | jq .
+```
+
+Expected output: Formatted JSON configuration without syntax errors. If `jq` is not installed, you can use:
+```bash
+python3 -m json.tool .mcp.json
+```
+
+### 4. Verify Configuration Values
+Manually review `.mcp.json` to ensure:
+- ✓ Jira URL is correct (e.g., `https://your-company.atlassian.net`)
+- ✓ Email address matches your Jira account
+- ✓ API token is the full token string (not a placeholder)
+- ✓ No placeholder text remains (`YOUR_*` values replaced)
+
+**Note:** Full Jira MCP connection testing (verifying API access, searching boards, etc.) will be available once Jira-dependent skills are implemented. For now, these manual validation steps ensure your configuration is properly formatted and ready for use.
+
+## Step 5: Restart Claude Code
+
+Restart Claude Code to load the new MCP configuration:
 
 ```bash
-# Check if Jira tools are available
-# Atlassian MCP should provide tools for:
-# - Searching boards
-# - Getting board details
-# - Searching projects
+# Exit current session
+exit
+
+# Start new session
+claude code
 ```
 
-Test the `/add-project` skill and try linking a Jira board.
+The Atlassian MCP server will be automatically loaded from `.mcp.json`.
 
-## Step 5: Test Jira Integration
+## Step 6: Test Jira Integration (Future)
+
+**Note:** Full integration testing will be available once Jira-dependent skills are implemented. Future testing will include:
 
 ### Test Board Linking:
 1. Run `/add-project --team=<your-team>`
@@ -124,20 +203,96 @@ Test the `/add-project` skill and try linking a Jira board.
 6. Verify Jira boards appear in search results
 7. Select a board to link
 
+For now, you can verify basic API connectivity using `curl` (see "Need Help?" section below).
+
 ## Troubleshooting
 
-### "Jira MCP not configured" Error
+### Configuration File Issues
 
-- Verify `mcp.json` exists at `~/.claude/mcp.json`
-- Check that the Atlassian MCP entry is correct
-- Restart Claude Code after modifying `mcp.json`
+#### `.mcp.json` not found
+- Verify you're in the repository root directory
+- Copy from example: `cp mcp-config-example.json .mcp.json`
+- Check file isn't hidden: `ls -la .mcp.json`
 
-### "Authentication Failed" Errors
+#### Invalid JSON syntax
+- Run validation: `cat .mcp.json | jq .`
+- Common issues:
+  - Missing commas between entries
+  - Unclosed quotes or brackets
+  - Trailing commas (not allowed in JSON)
+- Use a JSON validator or editor with syntax highlighting
 
-- Verify API token is correct and not expired
-- Check email address matches your Jira account
-- Verify Jira site URL is correct (include `https://`)
-- Ensure your account has permissions to access boards
+#### Configuration not loaded
+- Restart Claude Code after modifying `.mcp.json`
+- Check Claude Code looks for `.mcp.json` in current directory
+- Verify no syntax errors in JSON
+
+### API Token and Authentication Issues
+
+#### "Authentication Failed" or "401 Unauthorized"
+- **API token incorrect:** Regenerate token at [https://id.atlassian.com/manage-profile/security/api-tokens](https://id.atlassian.com/manage-profile/security/api-tokens)
+- **Token expired:** Tokens don't expire automatically, but can be revoked. Create a new token.
+- **Email mismatch:** Email in `.mcp.json` must exactly match your Atlassian account email
+- **Test with curl:**
+  ```bash
+  curl -u your-email@example.com:your-api-token \
+    https://your-company.atlassian.net/rest/api/3/myself
+  ```
+  Should return your account information if credentials are valid.
+
+#### "403 Forbidden" or "Access Denied"
+- **Insufficient permissions:** Your Jira account needs "Browse Projects" and "View Development Tools" permissions
+- **Private boards:** Ensure you have access to the boards/projects you're trying to view
+- **Contact admin:** Ask your Jira administrator to verify your permissions
+
+### Domain URL Format Issues
+
+#### Invalid Jira URL
+- **Must include protocol:** Use `https://your-company.atlassian.net` (not `your-company.atlassian.net`)
+- **No trailing slash:** Use `https://your-company.atlassian.net` (not `https://your-company.atlassian.net/`)
+- **Correct subdomain:** For Jira Cloud, use `*.atlassian.net` format
+- **For Jira Server/Data Center:** Use your custom domain (e.g., `https://jira.yourcompany.com`)
+
+#### Confluence URL different from Jira
+- If Confluence is hosted separately, use different URLs:
+  ```json
+  "--jira-url", "https://your-company.atlassian.net",
+  "--confluence-url", "https://your-company.atlassian.net/wiki"
+  ```
+
+### Permission Scope Problems
+
+#### Missing board access
+- **Board visibility:** Boards inherit permissions from their projects
+- **Project access:** Ensure you have "Browse Projects" on the board's project
+- **Board filters:** Some boards use JQL filters that may restrict visibility
+- **Archived projects:** Boards in archived projects may not be accessible
+
+#### Unable to search or list boards
+- **Jira Software license:** Board features require Jira Software (not just Jira Core)
+- **Permission level:** You need at least "Browse Projects" permission
+- **Rate limiting:** Wait a few minutes and retry if you're hitting rate limits
+
+### Rate Limiting
+
+- **Jira Cloud limits:** 10,000 requests/hour for paid plans, lower for free plans
+- **Symptoms:** HTTP 429 errors or "Rate limit exceeded" messages
+- **Solutions:**
+  - Wait 10-15 minutes before retrying
+  - Reduce request frequency
+  - Use a dedicated service account with higher limits
+
+### MCP Server Issues
+
+#### Atlassian MCP server not starting
+- **npx not found:** Ensure Node.js and npm are installed: `node --version`
+- **Network issues:** Check internet connectivity for downloading MCP server
+- **Package install fails:** Clear npm cache: `npm cache clean --force`
+
+#### MCP server crashes or timeouts
+- **Check logs:** Look for error messages in Claude Code output
+- **Restart Claude Code:** Exit and restart to reload MCP servers
+- **Update MCP server:** npx automatically uses latest version, but you can clear cache: `rm -rf ~/.npm/_npx`
 
 ### No Boards Found
 
@@ -145,18 +300,7 @@ Test the `/add-project` skill and try linking a Jira board.
 - Check search keyword spelling
 - Ensure boards aren't in archived projects
 - Try searching with different keywords
-
-### "Forbidden" or "Access Denied"
-
-- Verify your Jira account has board view permissions
-- Check that boards belong to projects you can access
-- Contact Jira administrator to verify permissions
-
-### Rate Limiting
-
-- Jira Cloud has rate limits (10,000 requests/hour for paid plans)
-- Wait a few minutes if you hit rate limits
-- Consider using a dedicated service account
+- Verify you have Jira Software (boards not available in Jira Core)
 
 ## Jira Permissions Required
 
@@ -169,24 +313,29 @@ Your API token inherits your account permissions.
 ## Security Best Practices
 
 1. **Never commit tokens to git**
-   - Add `.claude/mcp.json` to `.gitignore` if storing tokens there
-   - Use environment variables for tokens
+   - `.mcp.json` is already in `.gitignore` to prevent accidental commits
+   - Verify before committing: `git check-ignore .mcp.json`
+   - Alternatively, use environment variables for tokens
 
 2. **Use dedicated service accounts** (for team use)
    - Create a service account with minimal permissions
    - Don't share personal API tokens
+   - Service accounts provide better audit trails
 
 3. **Rotate tokens regularly**
-   - Generate new API tokens periodically
+   - Generate new API tokens periodically (e.g., every 90 days)
    - Revoke old tokens in Atlassian account settings
+   - Keep track of where tokens are used
 
 4. **Limit token exposure**
-   - Don't paste tokens in chat or email
-   - Use secure secret management tools
+   - Don't paste tokens in chat, email, or documentation
+   - Use secure secret management tools for team sharing
+   - Never commit `.mcp.json` to version control
 
 5. **Monitor token usage**
    - Review Jira audit logs periodically
    - Revoke any suspicious or unused tokens
+   - Set up alerts for unusual API activity
 
 ## Additional Resources
 

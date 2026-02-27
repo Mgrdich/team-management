@@ -53,11 +53,11 @@ Fetch and display Jira tasks for a team in a basic table format.
   - [x] Build member lookup map (email → name)
   - **[Agent: general-purpose]**
 
-- [ ] **Query Jira via MCP**
-  - [ ] Build JQL query: `assignee in (emails...) AND status not in (Done, Closed, Resolved)`
-  - [ ] Execute Jira MCP search_issues call
-  - [ ] Parse response: extract key, summary, status, assignee
-  - [ ] Filter out completed tasks
+- [x] **Query Jira via MCP**
+  - [x] Build JQL query: `assignee in (emails...) AND status not in (Done, Closed, Resolved)`
+  - [x] Execute Jira MCP search_issues call
+  - [x] Parse response: extract key, summary, status, assignee
+  - [x] Filter out completed tasks
   - **[Agent: general-purpose]**
 
 - [ ] **Render basic table**
@@ -80,10 +80,10 @@ Fetch and display Jira tasks for a team in a basic table format.
 
 Integrate GitLab data and merge with Jira results.
 
-- [ ] **Implement GitLab MCP availability check**
-  - [ ] Check for GitLab MCP tools availability
-  - [ ] If unavailable, show warning and continue with Jira-only
-  - [ ] Do NOT exit if GitLab unavailable (optional integration)
+- [x] **Implement GitLab MCP availability check**
+  - [x] Check for GitLab MCP tools availability
+  - [x] If unavailable, show warning and continue with Jira-only
+  - [x] Do NOT exit if GitLab unavailable (optional integration)
   - **[Agent: general-purpose]**
 
 - [ ] **Query GitLab via MCP**
@@ -121,10 +121,10 @@ Integrate GitLab data and merge with Jira results.
 
 Implement the `--member` parameter to filter tasks by team member.
 
-- [ ] **Parse --member parameter**
-  - [ ] Extract `--member` from command arguments
-  - [ ] Support formats: first name, full name, email
-  - [ ] Search members.json for matches
+- [x] **Parse --member parameter**
+  - [x] Extract `--member` from command arguments
+  - [x] Support formats: first name, full name, email
+  - [x] Search members.json for matches
   - **[Agent: general-purpose]**
 
 - [ ] **Handle multiple matches**

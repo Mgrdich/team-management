@@ -58,7 +58,7 @@ Check if Slack MCP tools are available by looking for Slack-related MCP tools/fu
   ```
   Error: Slack MCP not configured.
 
-  To use this feature, you need to configure Slack MCP integration.
+  To use this feature, configure Slack MCP integration.
   See documentation: docs/setup-slack-mcp.md
 
   Alternative: Use /add-team-members to add members manually.
