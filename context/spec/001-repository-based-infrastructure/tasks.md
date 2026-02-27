@@ -10,42 +10,42 @@ This task list breaks down the Repository-Based Infrastructure feature into smal
 
 Build the foundational bash utility scripts needed by all other features.
 
-- [ ] **Create bash utility for ID generation**
+- [x] **Create bash utility for ID generation**
   - [x] Create `scripts/utils/id-generator.sh` with shebang and `set -euo pipefail`
-  - [ ] Implement `team_name_to_id()` function (converts "Team Alpha" to "team-alpha", max 63 chars, sanitize special chars)
-  - [ ] Implement `generate_member_id()` function (format: `mem-[timestamp]-[3-random-chars]`)
-  - [ ] Implement `generate_project_id()` function (format: `proj-[timestamp]-[3-random-chars]`)
-  - [ ] Make script executable: `chmod +x scripts/utils/id-generator.sh`
-  - [ ] **[Agent: bash-script-executor]**
+  - [x] Implement `team_name_to_id()` function (converts "Team Alpha" to "team-alpha", max 63 chars, sanitize special chars)
+  - [x] Implement `generate_member_id()` function (format: `mem-[timestamp]-[3-random-chars]`)
+  - [x] Implement `generate_project_id()` function (format: `proj-[timestamp]-[3-random-chars]`)
+  - [x] Make script executable: `chmod +x scripts/utils/id-generator.sh`
+  - [x] **[Agent: bash-script-executor]**
 
-- [ ] **Create bash utility for file operations**
-  - [ ] Create `scripts/utils/file-ops.sh` with shebang and error handling
-  - [ ] Implement `create_team_structure()` function (creates `.team/[team-id]/` directory)
-  - [ ] Implement `validate_team_exists()` function (checks if `.team/[team-id]/` exists, returns 0/1)
-  - [ ] Implement `list_teams()` function (lists all team IDs from `.team/` subdirectories)
-  - [ ] Make script executable: `chmod +x scripts/utils/file-ops.sh`
-  - [ ] **[Agent: bash-script-executor]**
+- [x] **Create bash utility for file operations**
+  - [x] Create `scripts/utils/file-ops.sh` with shebang and error handling
+  - [x] Implement `create_team_structure()` function (creates `.team/[team-id]/` directory)
+  - [x] Implement `validate_team_exists()` function (checks if `.team/[team-id]/` exists, returns 0/1)
+  - [x] Implement `list_teams()` function (lists all team IDs from `.team/` subdirectories)
+  - [x] Make script executable: `chmod +x scripts/utils/file-ops.sh`
+  - [x] **[Agent: bash-script-executor]**
 
-- [ ] **Create bash utility for JSON operations**
-  - [ ] Create `scripts/utils/json-utils.sh` with shebang and error handling
-  - [ ] Implement `write_initial_files()` function (creates team-config.json, members.json, projects.json with correct schemas)
-  - [ ] Implement `append_member()` function (appends member to members.json, checks for duplicate by email)
-  - [ ] Implement `append_project()` function (appends project to projects.json)
-  - [ ] Implement `update_current_projects()` function (adds project ID to current_projects array in team-config.json)
-  - [ ] Implement `remove_member()` function (removes member by email using jq)
-  - [ ] Implement `read_team_config()`, `read_members()`, `read_projects()` functions (output JSON to stdout)
-  - [ ] Make script executable: `chmod +x scripts/utils/json-utils.sh`
-  - [ ] **[Agent: bash-script-executor]**
+- [x] **Create bash utility for JSON operations**
+  - [x] Create `scripts/utils/json-utils.sh` with shebang and error handling
+  - [x] Implement `write_initial_files()` function (creates team-config.json, members.json, projects.json with correct schemas)
+  - [x] Implement `append_member()` function (appends member to members.json, checks for duplicate by email)
+  - [x] Implement `append_project()` function (appends project to projects.json)
+  - [x] Implement `update_current_projects()` function (adds project ID to current_projects array in team-config.json)
+  - [x] Implement `remove_member()` function (removes member by email using jq)
+  - [x] Implement `read_team_config()`, `read_members()`, `read_projects()` functions (output JSON to stdout)
+  - [x] Make script executable: `chmod +x scripts/utils/json-utils.sh`
+  - [x] **[Agent: bash-script-executor]**
 
-- [ ] **Unit test bash utilities**
-  - [ ] Test `team_name_to_id` with various inputs (spaces, caps, special chars, long names)
-  - [ ] Test ID generation produces unique IDs and matches expected format
-  - [ ] Test `create_team_structure` creates directory correctly
-  - [ ] Test `validate_team_exists` returns correct exit codes
-  - [ ] Test `write_initial_files` creates valid JSON files with correct schemas
-  - [ ] Test `append_member` adds member and rejects duplicates
-  - [ ] Test `remove_member` removes by email correctly
-  - [ ] **[Agent: test-writer]**
+- [x] **Unit test bash utilities**
+  - [x] Test `team_name_to_id` with various inputs (spaces, caps, special chars, long names)
+  - [x] Test ID generation produces unique IDs and matches expected format
+  - [x] Test `create_team_structure` creates directory correctly
+  - [x] Test `validate_team_exists` returns correct exit codes
+  - [x] Test `write_initial_files` creates valid JSON files with correct schemas
+  - [x] Test `append_member` adds member and rejects duplicates
+  - [x] Test `remove_member` removes by email correctly
+  - [x] **[Agent: test-writer]**
 
 ---
 
