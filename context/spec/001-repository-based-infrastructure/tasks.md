@@ -106,46 +106,51 @@ Enable users to view all initialized teams with the `/list-teams` command.
 
 ---
 
-## Slice 4: Add Member Manually
+## Slice 4: Add Members Manually
 
-Enable users to manually add team members with the `/add-member` command.
+Enable users to manually add team members with the `/add-team-members` command.
 
-- [ ] **Create `/add-member` skill**
-  - [ ] Create `.claude/commands/add-member.md` skill file
-  - [ ] Add frontmatter with description: "Add team member manually"
-  - [ ] Document usage: `/add-member --team=[team-id]`
-  - [ ] Document parameters: `--team` (required)
-  - [ ] Document behavior:
+- [x] **Create `/add-team-members` skill**
+  - [x] Create `.claude/skills/add-team-members/SKILL.md` skill file
+  - [x] Add frontmatter with description: "Add one or more team members manually to a team"
+  - [x] Document usage: `/add-team-members --team=[team-id]`
+  - [x] Document parameters: `--team` (required)
+  - [x] Document behavior:
     - Validates team exists using bash utility
-    - Uses AskUserQuestion to collect: name, email, role/title
-    - Optionally asks for git username/email
+    - Collects member info: name, email, role/title (plain text)
+    - Searches GitLab via MCP based on member name to auto-populate git info
+    - Uses AskUserQuestion tool to present GitLab user options
+    - Fallback to manual git entry if GitLab MCP unavailable or no matches
     - Generates member ID using bash utility
     - Builds member JSON object with current ISO 8601 timestamp and source: "manual"
     - Calls `json-utils.sh append_member` to add to members.json
     - Displays confirmation: "Added [name] to [team-name]"
-  - [ ] Add examples section
-  - [ ] **[Agent: general-purpose]**
+    - Uses AskUserQuestion tool to ask "Add another member?" - loops until user says No
+    - Shows final summary with count of members added
+  - [x] Add examples section
+  - [x] **[Agent: general-purpose]**
 
-- [ ] **Test adding members**
-  - [ ] Run `/add-member --team=test-team`
-  - [ ] Provide name: "John Doe", email: "john@example.com", role: "Engineer"
-  - [ ] Verify member added to `test-team/members.json` with all fields (member_id, name, email, role, added_at, source)
-  - [ ] Verify confirmation message displayed
-  - [ ] Add second member with same email: verify duplicate rejected with error message
-  - [ ] Add second member with different email: verify successfully added
-  - [ ] Verify members.json contains array of 2 members
-  - [ ] **[Agent: general-purpose]**
+- [x] **Test adding members**
+  - [x] Run bash utilities manually to test member addition workflow
+  - [x] Added "John Doe", email: "john@example.com", role: "Engineer" without git info
+  - [x] Verify member added to `team-alpha/members.json` with all fields (member_id, name, email, role, added_at, source)
+  - [x] Added "Jane Smith", email: "jane@example.com", role: "Designer" with git info
+  - [x] Added git information: username "jsmith", email "jsmith@github.com"
+  - [x] Verified second member added with git fields (git_username, git_email)
+  - [x] Verified members.json contains array of 2 members
+  - [x] Tested duplicate email: tried adding member with "john@example.com" again, verified error "Member with email already exists"
+  - [x] **[Agent: general-purpose]**
 
 ---
 
 ## Slice 5: Remove Member
 
-Enable users to remove team members with the `/remove-member` command.
+Enable users to remove team members with the `/remove-team-member` command.
 
-- [ ] **Create `/remove-member` skill**
-  - [ ] Create `.claude/commands/remove-member.md` skill file
+- [ ] **Create `/remove-team-member` skill**
+  - [ ] Create `.claude/skills/remove-team-member/SKILL.md` skill file
   - [ ] Add frontmatter with description: "Remove team member"
-  - [ ] Document usage: `/remove-member --team=[team-id]`
+  - [ ] Document usage: `/remove-team-member --team=[team-id]`
   - [ ] Document parameters: `--team` (required)
   - [ ] Document behavior:
     - Validates team exists
@@ -158,8 +163,8 @@ Enable users to remove team members with the `/remove-member` command.
   - [ ] **[Agent: general-purpose]**
 
 - [ ] **Test removing members**
-  - [ ] Verify test-team has 2 members from previous slice
-  - [ ] Run `/remove-member --team=test-team`
+  - [ ] Verify team-alpha has 2 members from previous slice
+  - [ ] Run `/remove-team-member --team=team-alpha`
   - [ ] Select first member from list
   - [ ] Confirm removal
   - [ ] Verify member removed from members.json

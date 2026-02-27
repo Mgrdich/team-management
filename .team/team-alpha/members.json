@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "member_id": "mem-1772212829-rvc",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "role": "Engineer",
+    "added_at": "2026-02-27T17:20:56Z",
+    "source": "manual"
+  },
+  {
+    "member_id": "mem-1772212870-olp",
+    "name": "Jane Smith",
+    "email": "jane@example.com",
+    "role": "Designer",
+    "added_at": "2026-02-27T17:21:16Z",
+    "source": "manual",
+    "git_username": "jsmith",
+    "git_email": "jsmith@github.com"
+  }
+]
