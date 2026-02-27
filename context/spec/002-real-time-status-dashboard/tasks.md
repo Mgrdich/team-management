@@ -60,10 +60,10 @@ Fetch and display Jira tasks for a team in a basic table format.
   - [x] Filter out completed tasks
   - **[Agent: general-purpose]**
 
-- [ ] **Render basic table**
-  - [ ] Build table with columns: Member | Task ID | Title | Status
-  - [ ] Use bash `column -t -s '|'` or `printf` for formatting
-  - [ ] Sort by member name alphabetically
+- [x] **Render basic table**
+  - [x] Build table with columns: Member | Task ID | Title | Status
+  - [x] Use bash `column -t -s '|'` or `printf` for formatting
+  - [x] Sort by member name alphabetically
   - **[Agent: general-purpose]**
 
 - [ ] **Test Slice 2** (requires Jira MCP configured)
@@ -86,25 +86,25 @@ Integrate GitLab data and merge with Jira results.
   - [x] Do NOT exit if GitLab unavailable (optional integration)
   - **[Agent: general-purpose]**
 
-- [ ] **Query GitLab via MCP**
-  - [ ] Extract GitLab project IDs from `projects.json`
-  - [ ] Extract git_email addresses from `members.json`
-  - [ ] Query GitLab issues by project and by assignee
-  - [ ] Query GitLab merge requests by project and by assignee
-  - [ ] Parse responses: extract iid, title, state, assignee
-  - [ ] Filter out closed/merged items
+- [x] **Query GitLab via MCP**
+  - [x] Extract GitLab project IDs from `projects.json`
+  - [x] Extract git_email addresses from `members.json`
+  - [x] Query GitLab issues by project and by assignee
+  - [x] Query GitLab merge requests by project and by assignee
+  - [x] Parse responses: extract iid, title, state, assignee
+  - [x] Filter out closed/merged items
   - **[Agent: general-purpose]**
 
-- [ ] **Merge Jira and GitLab results**
-  - [ ] Combine jira_issues + gitlab_issues + gitlab_mrs
-  - [ ] Deduplicate if needed
-  - [ ] Sort by member name, then by status
+- [x] **Merge Jira and GitLab results**
+  - [x] Combine jira_issues + gitlab_issues + gitlab_mrs
+  - [x] Deduplicate if needed
+  - [x] Sort by member name, then by status
   - **[Agent: general-purpose]**
 
-- [ ] **Update table rendering**
-  - [ ] Display GitLab MRs with "!" prefix (e.g., "!456")
-  - [ ] Display GitLab issues with "#" prefix (e.g., "#123")
-  - [ ] Keep same table format
+- [x] **Update table rendering**
+  - [x] Display GitLab MRs with "!" prefix (e.g., "!456")
+  - [x] Display GitLab issues with "#" prefix (e.g., "#123")
+  - [x] Keep same table format
   - **[Agent: general-purpose]**
 
 - [ ] **Test Slice 3** (requires Jira + GitLab MCPs configured)
@@ -127,14 +127,14 @@ Implement the `--member` parameter to filter tasks by team member.
   - [x] Search members.json for matches
   - **[Agent: general-purpose]**
 
-- [ ] **Handle multiple matches**
-  - [ ] If multiple members match (e.g., two "Sarah"s), use AskUserQuestion to select
-  - [ ] Display member name and email in options
+- [x] **Handle multiple matches**
+  - [x] If multiple members match (e.g., two "Sarah"s), use AskUserQuestion to select
+  - [x] Display member name and email in options
   - **[Agent: general-purpose]**
 
-- [ ] **Filter results by member**
-  - [ ] After fetching Jira/GitLab, filter where assignee matches selected member
-  - [ ] Display error if no member found: "No team member found matching..."
+- [x] **Filter results by member**
+  - [x] After fetching Jira/GitLab, filter where assignee matches selected member
+  - [x] Display error if no member found: "No team member found matching..."
   - **[Agent: general-purpose]**
 
 - [ ] **Test Slice 4**
@@ -152,32 +152,32 @@ Implement the `--member` parameter to filter tasks by team member.
 
 Parse natural language queries to filter results dynamically.
 
-- [ ] **Implement query parsing**
-  - [ ] Extract query string from command arguments (text after parameters)
-  - [ ] Parse for patterns: "blocked", "in progress", member names, keywords
-  - [ ] Build filter criteria: status_filter, member_filter, keyword_filter
+- [x] **Implement query parsing**
+  - [x] Extract query string from command arguments (text after parameters)
+  - [x] Parse for patterns: "blocked", "in progress", member names, keywords
+  - [x] Build filter criteria: status_filter, member_filter, keyword_filter
   - **[Agent: general-purpose]**
 
-- [ ] **Apply status filters**
-  - [ ] "blocked" / "blockers" → filter to status=Blocked
-  - [ ] "in progress" → filter to status="In Progress"
-  - [ ] Apply after fetching from MCP
+- [x] **Apply status filters**
+  - [x] "blocked" / "blockers" → filter to status=Blocked
+  - [x] "in progress" → filter to status="In Progress"
+  - [x] Apply after fetching from MCP
   - **[Agent: general-purpose]**
 
-- [ ] **Apply keyword filters**
-  - [ ] Search task title/description for keyword (case-insensitive)
-  - [ ] Support queries like "auth feature", "payment"
+- [x] **Apply keyword filters**
+  - [x] Search task title/description for keyword (case-insensitive)
+  - [x] Support queries like "auth feature", "payment"
   - **[Agent: general-purpose]**
 
-- [ ] **Apply combined filters**
-  - [ ] Support "sarah's blocked tasks" → member + status filter
-  - [ ] Support "jira only" → exclude GitLab results
-  - [ ] Support "merge requests" / "MRs" → show only GitLab MRs
+- [x] **Apply combined filters**
+  - [x] Support "sarah's blocked tasks" → member + status filter
+  - [x] Support "jira only" → exclude GitLab results
+  - [x] Support "merge requests" / "MRs" → show only GitLab MRs
   - **[Agent: general-purpose]**
 
-- [ ] **Add query fallback**
-  - [ ] If query cannot be parsed, show default view
-  - [ ] Display helper message: "Showing default view. Try queries like..."
+- [x] **Add query fallback**
+  - [x] If query cannot be parsed, show default view
+  - [x] Display helper message: "Showing default view. Try queries like..."
   - **[Agent: general-purpose]**
 
 - [ ] **Test Slice 5**
@@ -200,22 +200,22 @@ Parse natural language queries to filter results dynamically.
 
 Enrich member display names with Slack names when Slack MCP available.
 
-- [ ] **Implement Slack MCP availability check**
-  - [ ] Check for Slack MCP tools availability
-  - [ ] If unavailable, silently fall back to members.json names
-  - [ ] No error shown (graceful degradation)
+- [x] **Implement Slack MCP availability check**
+  - [x] Check for Slack MCP tools availability
+  - [x] If unavailable, silently fall back to members.json names
+  - [x] No error shown (graceful degradation)
   - **[Agent: general-purpose]**
 
-- [ ] **Fetch Slack display names**
-  - [ ] For each member with `slack_user_id` in members.json
-  - [ ] Call Slack MCP `users.info`
-  - [ ] Extract `profile.display_name` or `profile.real_name`
-  - [ ] Build name map (email → slack_name)
+- [x] **Fetch Slack display names**
+  - [x] For each member with `slack_user_id` in members.json
+  - [x] Call Slack MCP `users.info`
+  - [x] Extract `profile.display_name` or `profile.real_name`
+  - [x] Build name map (email → slack_name)
   - **[Agent: general-purpose]**
 
-- [ ] **Use Slack names in table**
-  - [ ] Display Slack name if available
-  - [ ] Fall back to members.json name if Slack unavailable or user not found
+- [x] **Use Slack names in table**
+  - [x] Display Slack name if available
+  - [x] Fall back to members.json name if Slack unavailable or user not found
   - **[Agent: general-purpose]**
 
 - [ ] **Test Slice 6** (requires Slack MCP configured)
@@ -232,23 +232,23 @@ Enrich member display names with Slack names when Slack MCP available.
 
 Allow users to request additional columns via natural language.
 
-- [ ] **Parse column requests**
-  - [ ] Detect keywords in query: "source", "updated", "detail", "email"
-  - [ ] Build list of requested additional columns
-  - [ ] "show more" / "details" → add all available columns
+- [x] **Parse column requests**
+  - [x] Detect keywords in query: "source", "updated", "detail", "email"
+  - [x] Build list of requested additional columns
+  - [x] "show more" / "details" → add all available columns
   - **[Agent: general-purpose]**
 
-- [ ] **Fetch additional data**
-  - [ ] For "source": track whether task from Jira or GitLab
-  - [ ] For "last updated": extract updated timestamp from API
-  - [ ] For "MR status": extract draft/ready/merged for GitLab MRs
-  - [ ] For "assignee email": include full email address
+- [x] **Fetch additional data**
+  - [x] For "source": track whether task from Jira or GitLab
+  - [x] For "last updated": extract updated timestamp from API
+  - [x] For "MR status": extract draft/ready/merged for GitLab MRs
+  - [x] For "assignee email": include full email address
   - **[Agent: general-purpose]**
 
-- [ ] **Render additional columns**
-  - [ ] Add requested columns after default columns
-  - [ ] Format timestamps as "YYYY-MM-DD HH:MM"
-  - [ ] Adjust table width for additional columns
+- [x] **Render additional columns**
+  - [x] Add requested columns after default columns
+  - [x] Format timestamps as "YYYY-MM-DD HH:MM"
+  - [x] Adjust table width for additional columns
   - **[Agent: general-purpose]**
 
 - [ ] **Test Slice 7**
@@ -267,23 +267,23 @@ Allow users to request additional columns via natural language.
 
 Handle edge cases and display helpful error messages.
 
-- [ ] **Implement empty state messages**
-  - [ ] Team has zero tasks → "No active tasks found for [team]. All clear!"
-  - [ ] Filtered query returns nothing → "No tasks match your query: '[query]'. Try a different search."
-  - [ ] Specific member has no tasks → "[Member] has no active tasks."
+- [x] **Implement empty state messages**
+  - [x] Team has zero tasks → "No active tasks found for [team]. All clear!"
+  - [x] Filtered query returns nothing → "No tasks match your query: '[query]'. Try a different search."
+  - [x] Specific member has no tasks → "[Member] has no active tasks."
   - **[Agent: general-purpose]**
 
-- [ ] **Enhance MCP error messages**
-  - [ ] Jira MCP unavailable → "Jira MCP not configured. Team status requires Jira integration. See docs/setup-jira-mcp.md"
-  - [ ] GitLab MCP unavailable → "GitLab MCP not configured. Showing Jira data only. See docs/setup-gitlab-mcp.md"
-  - [ ] API rate limit (429) → "API rate limit reached. Please wait and retry."
-  - [ ] API errors (401, 403, 500) → Clear, helpful error messages
+- [x] **Enhance MCP error messages**
+  - [x] Jira MCP unavailable → "Jira MCP not configured. Team status requires Jira integration. See docs/setup-jira-mcp.md"
+  - [x] GitLab MCP unavailable → "GitLab MCP not configured. Showing Jira data only. See docs/setup-gitlab-mcp.md"
+  - [x] API rate limit (429) → "API rate limit reached. Please wait and retry."
+  - [x] API errors (401, 403, 500) → Clear, helpful error messages with troubleshooting hints
   - **[Agent: general-purpose]**
 
-- [ ] **Handle external assignees**
-  - [ ] If task assigned to email not in members.json, still display it
-  - [ ] Use assignee name from Jira/GitLab API response
-  - [ ] No error thrown
+- [x] **Handle external assignees**
+  - [x] If task assigned to email not in members.json, still display it
+  - [x] Use assignee name from Jira/GitLab API response
+  - [x] No error thrown
   - **[Agent: general-purpose]**
 
 - [ ] **Test Slice 8**

@@ -6,25 +6,28 @@
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-gitlab"],
       "env": {
-        "GITLAB_PERSONAL_ACCESS_TOKEN": "YOUR_GITLAB_TOKEN_HERE",
+        "GITLAB_PERSONAL_ACCESS_TOKEN": "${YOUR_GITLAB_TOKEN_HERE}",
         "GITLAB_API_URL": "https://gitlab.com/api/v4"
       }
     },
     "atlassian": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-atlassian"],
+      "args": [
+        "mcp-remote",
+        "https://mcp.atlassian.com/v1/sse"
+      ],
       "env": {
         "ATLASSIAN_URL": "https://your-domain.atlassian.net",
-        "ATLASSIAN_EMAIL": "your-email@example.com",
-        "ATLASSIAN_API_TOKEN": "YOUR_JIRA_CONFLUENCE_TOKEN_HERE"
+        "ATLASSIAN_EMAIL": "${YOUR_JIRA_EMAIL_HERE}",
+        "ATLASSIAN_API_TOKEN": "${YOUR_JIRA_CONFLUENCE_TOKEN_HERE}"
       }
     },
     "slack": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-slack"],
       "env": {
-        "SLACK_BOT_TOKEN": "YOUR_SLACK_BOT_TOKEN_HERE",
-        "SLACK_TEAM_ID": "YOUR_SLACK_TEAM_ID_HERE"
+        "SLACK_BOT_TOKEN": "${YOUR_SLACK_BOT_TOKEN_HERE}",
+        "SLACK_TEAM_ID": "${YOUR_SLACK_TEAM_ID_HERE}"
       }
     }
   }
