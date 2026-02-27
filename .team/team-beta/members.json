@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "member_id": "mem-1772214761-lie",
+    "name": "Bob Smith",
+    "email": "bob@example.com",
+    "role": "Engineer",
+    "added_at": "2026-02-27T17:52:41Z",
+    "source": "manual"
+  }
+]

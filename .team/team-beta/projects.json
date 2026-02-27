@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "project_id": "proj-1772214782-mrc",
+    "name": "Beta Project",
+    "status": "active",
+    "team_id": "team-beta",
+    "created_at": "2026-02-27T17:53:02Z",
+    "updated_at": "2026-02-27T17:53:02Z"
+  }
+]

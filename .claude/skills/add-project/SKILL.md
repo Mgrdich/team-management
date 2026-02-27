@@ -109,7 +109,212 @@ Map the user's selection to lowercase for storage:
 - "On Hold" → "on-hold"
 - "Archived" → "archived"
 
-### Step 6: Generate Project ID
+### Step 6: Ask About External Tool Linking
+
+**Use the `AskUserQuestion` tool** to ask which external tools to link:
+
+**IMPORTANT: Always use AskUserQuestion tool, never ask in plain text**
+
+```
+AskUserQuestion parameters:
+- Question: "Would you like to link this project to external tools?"
+- Header: "External tools"
+- Options:
+  - Label: "Yes, link to external tools"
+    Description: "Connect to Jira, GitLab, or Confluence"
+  - Label: "No, skip external linking"
+    Description: "Create project without external tool links"
+- multiSelect: false
+```
+
+**If user selects "No, skip external linking":**
+- Skip to Step 11 (Generate Project ID)
+
+**If user selects "Yes, link to external tools":**
+- Continue to Step 7
+
+### Step 7: Select External Tools to Link
+
+**Use the `AskUserQuestion` tool** to select which tools to link:
+
+```
+AskUserQuestion parameters:
+- Question: "Which external tools would you like to link?"
+- Header: "Select tools"
+- Options:
+  - Label: "Jira"
+    Description: "Link to a Jira board"
+  - Label: "GitLab"
+    Description: "Link to a GitLab project"
+  - Label: "Confluence"
+    Description: "Link to a Confluence space"
+- multiSelect: true  # Allow selecting multiple tools
+```
+
+**Note:** User can select one, multiple, or all tools.
+
+For each selected tool, proceed to the corresponding step:
+- If "Jira" selected → Step 8
+- If "GitLab" selected → Step 9
+- If "Confluence" selected → Step 10
+
+### Step 8: Link Jira Board (if selected)
+
+**Step 8.1: Check Jira MCP Availability**
+
+Check if Jira MCP (or Atlassian MCP) tools are available.
+
+**Important:** The Jira connection is through MCP (Model Context Protocol), not direct API calls.
+
+**Error Handling:**
+- If Jira MCP not available, display:
+  ```
+  Warning: Jira MCP not configured.
+
+  To link Jira boards, you need to configure Jira MCP integration.
+  See documentation: docs/setup-jira-mcp.md
+
+  Skipping Jira linking for this project.
+  ```
+- Continue to next selected tool (or Step 11 if no more tools)
+
+**Step 8.2: Search for Jira Boards**
+
+Ask for search keyword in plain text:
+```
+Please enter a keyword to search for Jira boards:
+(e.g., "engineering", "team-alpha", "sprint")
+```
+
+**Step 8.3: Call Jira MCP to Search Boards**
+
+Use Jira MCP to search for boards matching the keyword.
+
+**Error Handling:**
+- If MCP call fails, display error and skip Jira linking
+- If no boards found, display: "No Jira boards found matching '<keyword>'. Skipping Jira linking."
+
+**Step 8.4: Present Board Options**
+
+**Use the `AskUserQuestion` tool**:
+```
+AskUserQuestion parameters:
+- Question: "Which Jira board would you like to link?"
+- Header: "Select board"
+- Options: Present each board with format:
+  - Label: "<board-name>"
+  - Description: "<board-key> - <project-name>"
+- Add option:
+  - Label: "None"
+  - Description: "Skip Jira linking"
+- multiSelect: false
+```
+
+**If user selects a board:**
+- Store the board ID in variable: `jira_board_id="<selected-board-id>"`
+
+**If user selects "None":**
+- Skip Jira linking
+
+### Step 9: Link GitLab Project (if selected)
+
+**Step 9.1: Check GitLab MCP Availability**
+
+Check if GitLab MCP tools are available.
+
+**Important:** The GitLab connection is through MCP (Model Context Protocol), not direct API calls.
+
+**Error Handling:**
+- If GitLab MCP not available, display warning and skip GitLab linking
+
+**Step 9.2: Search for GitLab Projects**
+
+Ask for search keyword in plain text:
+```
+Please enter a keyword to search for GitLab projects:
+(e.g., "auth-service", "api", "frontend")
+```
+
+**Step 9.3: Call GitLab MCP to Search Projects**
+
+Use GitLab MCP to search for projects matching the keyword.
+
+**Error Handling:**
+- If MCP call fails, display error and skip GitLab linking
+- If no projects found, display: "No GitLab projects found matching '<keyword>'. Skipping GitLab linking."
+
+**Step 9.4: Present Project Options**
+
+**Use the `AskUserQuestion` tool**:
+```
+AskUserQuestion parameters:
+- Question: "Which GitLab project would you like to link?"
+- Header: "Select project"
+- Options: Present each project with format:
+  - Label: "<project-name>"
+  - Description: "<namespace>/<project-path>"
+- Add option:
+  - Label: "None"
+  - Description: "Skip GitLab linking"
+- multiSelect: false
+```
+
+**If user selects a project:**
+- Store the project ID in variable: `gitlab_project_id="<selected-project-id>"`
+
+**If user selects "None":**
+- Skip GitLab linking
+
+### Step 10: Link Confluence Space (if selected)
+
+**Step 10.1: Check Confluence MCP Availability**
+
+Check if Confluence MCP (or Atlassian MCP) tools are available.
+
+**Important:** The Confluence connection is through MCP (Model Context Protocol), not direct API calls.
+
+**Error Handling:**
+- If Confluence MCP not available, display warning and skip Confluence linking
+
+**Step 10.2: Search for Confluence Spaces**
+
+Ask for search keyword in plain text:
+```
+Please enter a keyword to search for Confluence spaces:
+(e.g., "engineering", "docs", "team")
+```
+
+**Step 10.3: Call Confluence MCP to Search Spaces**
+
+Use Confluence MCP to search for spaces matching the keyword.
+
+**Error Handling:**
+- If MCP call fails, display error and skip Confluence linking
+- If no spaces found, display: "No Confluence spaces found matching '<keyword>'. Skipping Confluence linking."
+
+**Step 10.4: Present Space Options**
+
+**Use the `AskUserQuestion` tool**:
+```
+AskUserQuestion parameters:
+- Question: "Which Confluence space would you like to link?"
+- Header: "Select space"
+- Options: Present each space with format:
+  - Label: "<space-name>"
+  - Description: "<space-key> - <space-type>"
+- Add option:
+  - Label: "None"
+  - Description: "Skip Confluence linking"
+- multiSelect: false
+```
+
+**If user selects a space:**
+- Store the space key in variable: `confluence_space="<selected-space-key>"`
+
+**If user selects "None":**
+- Skip Confluence linking
+
+### Step 11: Generate Project ID
 
 Generate a unique project ID using the ID generator utility:
 
@@ -121,16 +326,16 @@ This returns a unique ID in the format: `proj-[timestamp]-[3-random-chars]`
 
 Example: `proj-1709052123-x7m`
 
-### Step 7: Build Project JSON Object
+### Step 12: Build Project JSON Object
 
 Construct the project JSON object safely using `jq`:
 
 ```bash
 project_id="<generated-id>"
-name="<project-name>"
+project_name="<project-name>"
 repository_url="<repository-url>"  # Can be empty string
-description="<description>"  # Can be empty string
-status="<status>"  # lowercase: active, planned, on-hold, archived
+project_description="<description>"  # Can be empty string
+project_status="<status>"  # lowercase: active, planned, on-hold, archived
 team_id="<team-id>"
 created_at=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 updated_at="$created_at"
@@ -138,8 +343,8 @@ updated_at="$created_at"
 # Build base project object
 project_json=$(jq -n \
   --arg project_id "$project_id" \
-  --arg name "$name" \
-  --arg status "$status" \
+  --arg name "$project_name" \
+  --arg status "$project_status" \
   --arg team_id "$team_id" \
   --arg created_at "$created_at" \
   --arg updated_at "$updated_at" \
@@ -152,21 +357,37 @@ project_json=$(jq -n \
     updated_at: $updated_at
   }')
 
-# Add optional fields if provided
+# Add optional basic fields if provided
 if [[ -n "$repository_url" ]]; then
   project_json=$(echo "$project_json" | jq --arg repository_url "$repository_url" \
     '. + {repository_url: $repository_url}')
 fi
 
-if [[ -n "$description" ]]; then
-  project_json=$(echo "$project_json" | jq --arg description "$description" \
+if [[ -n "$project_description" ]]; then
+  project_json=$(echo "$project_json" | jq --arg description "$project_description" \
     '. + {description: $description}')
+fi
+
+# Add external tool links if provided
+if [[ -n "$jira_board_id" ]]; then
+  project_json=$(echo "$project_json" | jq --arg jira_board_id "$jira_board_id" \
+    '. + {jira_board_id: $jira_board_id}')
+fi
+
+if [[ -n "$gitlab_project_id" ]]; then
+  project_json=$(echo "$project_json" | jq --arg gitlab_project_id "$gitlab_project_id" \
+    '. + {gitlab_project_id: $gitlab_project_id}')
+fi
+
+if [[ -n "$confluence_space" ]]; then
+  project_json=$(echo "$project_json" | jq --arg confluence_space "$confluence_space" \
+    '. + {confluence_space: $confluence_space}')
 fi
 ```
 
-**Note:** External tool link fields (jira_board_id, gitlab_project_id, confluence_space) are NOT included in this basic version. They will be added in Slice 8.
+**Note:** External tool link fields are now supported (jira_board_id, gitlab_project_id, confluence_space). They are only included if linking was performed.
 
-### Step 8: Add Project to Team
+### Step 13: Add Project to Team
 
 Call the JSON utilities to append the project:
 
@@ -178,7 +399,7 @@ bash -c 'source ./scripts/utils/json-utils.sh && append_project "<team-id>" '"'"
 - If the command fails, display the error message and stop
 - The `append_project` function adds the project to projects.json
 
-### Step 9: Update Current Projects Array
+### Step 14: Update Current Projects Array
 
 Add the project ID to the team's current_projects array:
 
@@ -190,7 +411,7 @@ bash -c 'source ./scripts/utils/json-utils.sh && update_current_projects "<team-
 - If the command fails, display the error message
 - This updates the team-config.json file
 
-### Step 10: Display Confirmation
+### Step 15: Display Confirmation
 
 Show success confirmation with project details:
 
@@ -203,6 +424,10 @@ Project Details:
   Status: <status>
   Repository: <repository-url> (or "None" if not provided)
   Description: <description> (or "None" if not provided)
+  External Links:
+    - Jira Board: <jira_board_id> (or "None")
+    - GitLab Project: <gitlab_project_id> (or "None")
+    - Confluence Space: <confluence_space> (or "None")
   Created: <created-at>
 
 View all projects: /list-teams
@@ -463,11 +688,18 @@ This skill depends on these utility scripts:
 
 Verify these exist before execution if troubleshooting is needed.
 
-## Future Enhancements
+## External Tool Integration
 
-This is the **basic version** of the add-project skill. Slice 8 will enhance this skill to support:
-- Linking Jira boards (via Jira MCP)
-- Linking GitLab projects (via GitLab MCP)
-- Linking Confluence spaces (via Confluence MCP)
+This skill now supports linking projects to external tools via MCP:
+- **Jira boards** (via Jira/Atlassian MCP)
+- **GitLab projects** (via GitLab MCP)
+- **Confluence spaces** (via Confluence/Atlassian MCP)
 
-The basic version provides core project tracking without external tool integration.
+External tool linking is optional. Projects can be created without any external links. When MCPs are configured, the skill will search and present options from each tool for easy linking.
+
+**MCP Requirements:**
+- Jira linking requires Jira MCP or Atlassian MCP
+- GitLab linking requires GitLab MCP
+- Confluence linking requires Confluence MCP or Atlassian MCP
+
+If an MCP is not configured, the skill will display a warning and skip linking for that tool.

@@ -16,5 +16,13 @@
     "source": "manual",
     "git_username": "jsmith",
     "git_email": "jsmith@github.com"
+  },
+  {
+    "member_id": "mem-1772214742-vol",
+    "name": "Alice Johnson",
+    "email": "alice@example.com",
+    "role": "Tech Lead",
+    "added_at": "2026-02-27T17:52:22Z",
+    "source": "manual"
   }
 ]

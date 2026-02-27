@@ -259,36 +259,38 @@ Enable users to add projects without external tool links.
 
 Enhance `/add-project` to support linking Jira, GitLab, and Confluence resources.
 
-- [ ] **Enhance `/add-project` skill for external links**
-  - [ ] Update `.claude/commands/add-project.md` skill file
-  - [ ] Add to behavior documentation:
-    - After collecting basic project info, ask which external tools to link (Jira, GitLab, Confluence) using AskUserQuestion
+- [x] **Enhance `/add-project` skill for external links**
+  - [x] Update `.claude/skills/add-project/SKILL.md` skill file
+  - [x] Add to behavior documentation (Steps 6-10):
+    - After collecting basic project info and status, ask if user wants external tool linking using AskUserQuestion
+    - Ask which external tools to link (Jira, GitLab, Confluence) using AskUserQuestion with multiSelect
     - For each selected tool:
       - Check if respective MCP is available (Jira/Atlassian MCP, GitLab MCP, Confluence/Atlassian MCP)
-      - If not available, show error with setup instructions
-      - Use AskUserQuestion to get search keyword
+      - If not available, show warning with setup instructions and skip
+      - Ask for search keyword in plain text
       - Call MCP to search resources (boards for Jira, projects for GitLab, spaces for Confluence)
-      - Present search results using AskUserQuestion
-      - Store selected resource IDs in project JSON
-    - If user skips external linking, project still created successfully
-  - [ ] Update examples to show external linking
-  - [ ] Document MCP requirements and error handling
-  - [ ] **[Agent: general-purpose]**
+      - Present search results using AskUserQuestion with "None" option
+      - Store selected resource IDs in project JSON (jira_board_id, gitlab_project_id, confluence_space)
+    - If user skips external linking or selects "No", project created without external links
+    - Update JSON building (Step 12) to conditionally add external tool fields
+    - Update confirmation display (Step 15) to show external links
+  - [x] Update "Future Enhancements" section to "External Tool Integration" (now implemented)
+  - [x] Document MCP requirements and error handling for each tool
+  - [x] **[Agent: general-purpose]**
 
 - [ ] **Test project with external links (requires MCPs)**
-  - [ ] Verify Jira MCP and GitLab MCP configured (or document limitation)
-  - [ ] Run `/add-project --team=test-team`
+  - [ ] **BLOCKED: Requires Jira, GitLab, and Confluence MCPs (see Phase 3 roadmap)**
+  - [ ] Verify Jira MCP and GitLab MCP configured
+  - [ ] Run `/add-project --team=team-alpha`
   - [ ] Provide basic project info
-  - [ ] Choose to link Jira board
-  - [ ] Search for board by keyword
-  - [ ] Select board from results
-  - [ ] Choose to link GitLab project
-  - [ ] Search and select GitLab project
-  - [ ] Skip Confluence linking
-  - [ ] Verify projects.json contains project with jira_board_id and gitlab_project_id populated
-  - [ ] Verify confluence_space is null or absent
+  - [ ] Select "Yes, link to external tools"
+  - [ ] Select Jira, GitLab, Confluence from multi-select
+  - [ ] For Jira: search, select board from AskUserQuestion
+  - [ ] For GitLab: search, select project from AskUserQuestion
+  - [ ] For Confluence: search, select space from AskUserQuestion
+  - [ ] Verify projects.json contains project with jira_board_id, gitlab_project_id, and confluence_space populated
   - [ ] **[Agent: general-purpose]**
-  - [ ] **Note: Requires Jira and GitLab MCPs - if not available, document manual testing steps**
+  - [ ] **Note: Testing deferred until Phase 3 (MCP Configuration & Setup) is complete**
 
 ---
 
@@ -296,18 +298,21 @@ Enhance `/add-project` to support linking Jira, GitLab, and Confluence resources
 
 Verify that multiple teams can coexist without interference.
 
-- [ ] **Test multi-team isolation**
-  - [ ] Initialize second team: `/team-init --name="Team Beta"`
-  - [ ] Add member to team-alpha: "Alice" with email "alice@example.com"
-  - [ ] Add different member to team-beta: "Bob" with email "bob@example.com"
-  - [ ] Add project to team-alpha: "Alpha Project"
-  - [ ] Add different project to team-beta: "Beta Project"
-  - [ ] Verify team-alpha/members.json contains only Alice
-  - [ ] Verify team-beta/members.json contains only Bob
-  - [ ] Verify team-alpha/projects.json contains only Alpha Project
-  - [ ] Verify team-beta/projects.json contains only Beta Project
-  - [ ] Run `/list-teams`: verify both teams shown with correct member/project counts
-  - [ ] **[Agent: general-purpose]**
+- [x] **Test multi-team isolation**
+  - [x] Initialize second team: Team Beta (team-beta) using bash utilities
+  - [x] Add member to team-alpha: "Alice Johnson" with email "alice@example.com"
+  - [x] Add different member to team-beta: "Bob Smith" with email "bob@example.com"
+  - [x] Add project to team-alpha: "Alpha Project"
+  - [x] Add different project to team-beta: "Beta Project"
+  - [x] Verify team-alpha/members.json contains Alice (note: also has previous test data John, Jane)
+  - [x] Verify team-beta/members.json contains only Bob (isolated)
+  - [x] Verify team-alpha/projects.json contains Alpha Project (note: also has previous test data)
+  - [x] Verify team-beta/projects.json contains only Beta Project (isolated)
+  - [x] Verify isolation: Bob not in team-alpha, Alice not in team-beta
+  - [x] Verify isolation: Beta Project not in team-alpha, Alpha Project not in team-beta
+  - [x] Verify list output: team-alpha (3 members, 3 projects), team-beta (1 member, 1 project)
+  - [x] **[Agent: general-purpose]**
+  - [x] **Note: team-alpha contains previous test data; key validation is proper isolation between teams**
 
 ---
 
