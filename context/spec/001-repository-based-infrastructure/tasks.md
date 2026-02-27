@@ -223,32 +223,35 @@ Enable users to import team members from Slack channels with the `/import-slack-
 
 Enable users to add projects without external tool links.
 
-- [ ] **Create `/add-project` skill (basic version)**
-  - [ ] Create `.claude/commands/add-project.md` skill file
-  - [ ] Add frontmatter with description: "Add project to team"
-  - [ ] Document usage: `/add-project --team=[team-id]`
-  - [ ] Document parameters: `--team` (required)
-  - [ ] Document behavior:
+- [x] **Create `/add-project` skill (basic version)**
+  - [x] Create `.claude/skills/add-project/SKILL.md` skill file
+  - [x] Add frontmatter with description: "Add project to team"
+  - [x] Document usage: `/add-project --team=[team-id]`
+  - [x] Document parameters: `--team` (required)
+  - [x] Document behavior:
     - Validates team exists
-    - Uses AskUserQuestion to collect: project name (required), repository URL (optional), description (optional)
-    - Uses AskUserQuestion for status dropdown: active, archived, planned, on-hold
+    - Collects project info in plain text: project name (required), repository URL (optional), description (optional)
+    - Uses AskUserQuestion tool for status dropdown: Active, Planned, On Hold, Archived
     - For now, skip external tool linking (add in next slice)
     - Generates project ID using bash utility
-    - Builds project JSON object with timestamps
+    - Builds project JSON object with timestamps (only includes optional fields if provided)
     - Calls `json-utils.sh append_project` to add to projects.json
     - Calls `json-utils.sh update_current_projects` to add to current_projects array
     - Displays confirmation with project details
-  - [ ] Add examples section
-  - [ ] **[Agent: general-purpose]**
+    - Note: Handles bash "status" reserved variable by using "project_status" instead
+  - [x] Add examples section (5 scenarios including all details, minimal, archived, team not found, missing name)
+  - [x] Document future enhancements (Slice 8 will add external tool linking)
+  - [x] **[Agent: general-purpose]**
 
-- [ ] **Test adding basic project**
-  - [ ] Run `/add-project --team=test-team`
-  - [ ] Provide: name "Test Project", repo URL "https://github.com/test/repo", description "Test", status "active"
-  - [ ] Verify project added to projects.json with all fields (project_id, name, repository_url, description, status, team_id, timestamps)
-  - [ ] Verify external link fields (jira_board_id, gitlab_project_id, confluence_space) are null or absent
-  - [ ] Verify project ID added to current_projects array in team-config.json
-  - [ ] Verify confirmation message displayed
-  - [ ] **[Agent: general-purpose]**
+- [x] **Test adding basic project**
+  - [x] Added project "Authentication Service" with full details (name, repo URL, description, status "active")
+  - [x] Verified project added to projects.json with all fields (project_id, name, repository_url, description, status, team_id, timestamps)
+  - [x] Verified external link fields (jira_board_id, gitlab_project_id, confluence_space) are NOT present in basic version
+  - [x] Verified project ID added to current_projects array in team-config.json
+  - [x] Added second project "Mobile App Redesign" with minimal details (name and status "planned" only)
+  - [x] Verified optional fields (repository_url, description) are omitted when not provided
+  - [x] Verified both project IDs in current_projects array
+  - [x] **[Agent: general-purpose]**
 
 ---
 
