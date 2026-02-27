@@ -31,7 +31,7 @@ If no `--name` parameter was provided:
 Convert the team name to a kebab-case ID using the ID generator utility:
 
 ```bash
-/Users/mgo/Documents/team-management/scripts/utils/id-generator.sh team_name_to_id "Team Name"
+./scripts/utils/id-generator.sh team_name_to_id "Team Name"
 ```
 
 This will output a kebab-case ID like `team-name` or `engineering-team`.
@@ -45,7 +45,7 @@ This will output a kebab-case ID like `team-name` or `engineering-team`.
 Check if a team with this ID already exists:
 
 ```bash
-/Users/mgo/Documents/team-management/scripts/utils/file-ops.sh validate_team_exists "team-id"
+./scripts/utils/file-ops.sh validate_team_exists "team-id"
 ```
 
 **Expected Behavior**:
@@ -63,7 +63,7 @@ Use a different team name or manage the existing team.
 Create the team directory structure:
 
 ```bash
-/Users/mgo/Documents/team-management/scripts/utils/file-ops.sh create_team_structure "team-id" "Team Name"
+./scripts/utils/file-ops.sh create_team_structure "team-id" "Team Name"
 ```
 
 This creates the `.team/team-id/` directory.
@@ -77,7 +77,7 @@ This creates the `.team/team-id/` directory.
 Write the three initial configuration files:
 
 ```bash
-/Users/mgo/Documents/team-management/scripts/utils/json-utils.sh write_initial_files "team-id" "Team Name"
+./scripts/utils/json-utils.sh write_initial_files "team-id" "Team Name"
 ```
 
 This creates:
@@ -98,7 +98,7 @@ Team initialization complete!
 
 Team: Team Name
 ID: team-id
-Location: /Users/mgo/Documents/team-management/.team/team-id/
+Location: .team/team-id/
 
 Created files:
   - team-config.json (team metadata and settings)
@@ -142,7 +142,7 @@ Claude: [Shows summary with team-product-team-alpha created]
 
 ## Important Notes
 
-- ALWAYS use absolute paths when calling bash scripts
+- Scripts are called using relative paths from the project root
 - Check exit codes for each script call
 - Display clear error messages if any step fails
 - Do NOT continue to next step if current step fails
@@ -153,8 +153,8 @@ Claude: [Shows summary with team-product-team-alpha created]
 ## Script Dependencies
 
 This skill depends on these utility scripts:
-- `/Users/mgo/Documents/team-management/scripts/utils/id-generator.sh`
-- `/Users/mgo/Documents/team-management/scripts/utils/file-ops.sh`
-- `/Users/mgo/Documents/team-management/scripts/utils/json-utils.sh`
+- `./scripts/utils/id-generator.sh`
+- `./scripts/utils/file-ops.sh`
+- `./scripts/utils/json-utils.sh`
 
 Verify these exist before execution if troubleshooting is needed.

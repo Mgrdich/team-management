@@ -84,25 +84,25 @@ Enable users to initialize their first team with the `/team-init` command.
 
 Enable users to view all initialized teams with the `/list-teams` command.
 
-- [ ] **Create `/list-teams` skill**
-  - [ ] Create `.claude/commands/list-teams.md` skill file
-  - [ ] Add frontmatter with description: "List all initialized teams"
-  - [ ] Document usage: `/list-teams`
-  - [ ] Document behavior:
+- [x] **Create `/list-teams` skill**
+  - [x] Create `.claude/skills/list-teams/SKILL.md` skill file
+  - [x] Add frontmatter with description: "List all initialized teams"
+  - [x] Document usage: `/list-teams`
+  - [x] Document behavior:
     - Calls `file-ops.sh list_teams` to get team IDs
     - For each team, reads team-config.json to get team name, member count, project count
     - Displays formatted table or list
     - If no teams exist, shows message: "No teams initialized. Run /team-init to create one."
-  - [ ] Add examples section
-  - [ ] **[Agent: general-purpose]**
+  - [x] Add examples section
+  - [x] **[Agent: general-purpose]**
 
-- [ ] **Test listing teams**
-  - [ ] With zero teams: verify "No teams initialized" message
-  - [ ] Initialize one team: run `/team-init --name="Team Alpha"`
-  - [ ] Run `/list-teams`: verify shows "team-alpha" with name "Team Alpha", 0 members, 0 projects
-  - [ ] Initialize second team: run `/team-init --name="Team Beta"`
-  - [ ] Run `/list-teams`: verify shows both teams with correct info
-  - [ ] **[Agent: general-purpose]**
+- [x] **Test listing teams**
+  - [x] With zero teams: verify "No teams initialized" message
+  - [x] Initialize one team: run `/team-init --name="Team Alpha"`
+  - [x] Run `/list-teams`: verify shows "team-alpha" with name "Team Alpha", 0 members, 0 projects
+  - [x] Initialize second team: run `/team-init --name="Team Beta"`
+  - [x] Run `/list-teams`: verify shows both teams with correct info
+  - [x] **[Agent: general-purpose]**
 
 ---
 
