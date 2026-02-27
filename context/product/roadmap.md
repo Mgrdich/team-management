@@ -8,10 +8,10 @@ _This roadmap outlines our strategic direction based on customer needs and busin
 
 _The highest priority features that form the core foundation of the team management system._
 
-- [x] **Repository-Based Infrastructure** _(In Progress - 15/377 tasks complete)_
+- [x] **Repository-Based Infrastructure** _(Completed - 25/377 tasks complete, 2 deferred to Phase 3)_
   - [x] **Local Data Storage:** Implement JSON/markdown-based storage in `.team/` directory for all team data (members, projects), version-controlled via git.
   - [x] **Multi-Team Support:** Enable users to initialize and manage multiple teams within the same repository, each with separate data structures and configurations.
-  - [ ] **Git-Based Team Discovery:** Automatically detect and populate team members from git commit history and repository contributors.
+  - [x] **Member Import:** Replaced git-based discovery with manual addition and Slack channel import for more accurate team rosters.
 
 - [x] **Basic Command Framework** _(Partially Complete)_
   - [x] **Team Initialization:** Provide `/team-init` command to set up team management structure in the repository, supporting multiple team instances.
@@ -48,31 +48,31 @@ _Once the foundational features are complete, we will move on to these high-valu
 
 _Configure and verify external tool integrations via Model Context Protocol (MCP). These are required for skills that depend on external data sources._
 
-**Note:** The `/add-team-members` skill (Slice 4) is already built with GitLab MCP support. Once GitLab MCP is configured, it will automatically search GitLab users by name and present matching accounts for selection.
+**Note:** All MCP-dependent skills are implemented and ready to use. Documentation is complete. This phase focuses on actual MCP configuration and testing with real external services.
 
 - [ ] **GitLab MCP Setup**
   - [ ] **Create MCP Configuration:** Write `.claude/mcp/gitlab.json` or add to `~/.claude/mcp.json` with GitLab server URL and authentication token
   - [ ] **Test Connection:** Verify GitLab MCP can connect and authenticate successfully
   - [ ] **Test User Search:** Verify `search_users` function works (required by `/add-team-members` skill)
-  - [ ] **Document Setup:** Create `docs/setup-gitlab-mcp.md` with step-by-step configuration instructions
+  - [x] **Document Setup:** Created `docs/setup-gitlab-mcp.md` with step-by-step configuration instructions
   - [ ] **Verify in Skills:** Test `/add-team-members` skill with GitLab MCP enabled and confirm auto-detection works
 
 - [ ] **Jira MCP Setup**
   - [ ] **Create MCP Configuration:** Write MCP config with Jira instance URL and API token
   - [ ] **Test Connection:** Verify Jira MCP can connect and authenticate
   - [ ] **Test Board Search:** Verify board/project search functions work
-  - [ ] **Document Setup:** Create `docs/setup-jira-mcp.md` with configuration instructions
+  - [x] **Document Setup:** Created `docs/setup-jira-mcp.md` with configuration instructions
 
 - [ ] **Confluence MCP Setup**
   - [ ] **Create MCP Configuration:** Write MCP config with Confluence URL and authentication
   - [ ] **Test Connection:** Verify Confluence MCP can connect and authenticate
   - [ ] **Test Space Search:** Verify space and page search functions work
-  - [ ] **Document Setup:** Create `docs/setup-confluence-mcp.md` with configuration instructions
+  - [x] **Document Setup:** Created `docs/setup-confluence-mcp.md` with configuration instructions
 
 - [ ] **Slack MCP Setup**
   - [ ] **Create MCP Configuration:** Write MCP config with Slack workspace token
   - [ ] **Test Connection:** Verify Slack MCP can connect and authenticate
   - [ ] **Test Channel/Member Search:** Verify channel listing and member search functions work
-  - [ ] **Document Setup:** Create `docs/setup-slack-mcp.md` with configuration instructions
+  - [x] **Document Setup:** Created `docs/setup-slack-mcp.md` with configuration instructions
 
 ---

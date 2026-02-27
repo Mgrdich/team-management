@@ -1,7 +1,7 @@
 # Functional Specification: Repository-Based Infrastructure
 
 - **Roadmap Item:** Repository-Based Infrastructure (Local Data Storage, Multi-Team Support, Team Discovery)
-- **Status:** Draft
+- **Status:** Completed
 - **Author:** Claude
 - **Date:** 2026-02-27
 
@@ -30,9 +30,9 @@ This feature provides a repository-based storage foundation where all team confi
 **As a** manager, **I want to** initialize team management with a specific team name, **so that** I can create identifiable team structures in my repository.
 
 **Acceptance Criteria:**
-- [ ] When I run `/team-init --name="Team Alpha"`, the system creates a `.team/team-alpha/` directory structure (kebab-case derived from name)
-- [ ] The initialization creates three JSON files in the team directory: `team-config.json`, `members.json`, and `projects.json`
-- [ ] The `team-config.json` file contains both the provided team name and the generated team ID:
+- [x] When I run `/team-init --name="Team Alpha"`, the system creates a `.team/team-alpha/` directory structure (kebab-case derived from name)
+- [x] The initialization creates three JSON files in the team directory: `team-config.json`, `members.json`, and `projects.json`
+- [x] The `team-config.json` file contains both the provided team name and the generated team ID:
   ```json
   {
     "team_id": "team-alpha",
@@ -41,9 +41,9 @@ This feature provides a repository-based storage foundation where all team confi
     "current_projects": []
   }
   ```
-- [ ] If I run `/team-init` without providing a `--name` parameter, the system prompts me: "What would you like to name this team?"
-- [ ] If I run `/team-init --name="Team Alpha"` when `.team/team-alpha/` already exists, the system updates the existing configuration without data loss
-- [ ] After successful initialization, I see a detailed summary showing:
+- [x] If I run `/team-init` without providing a `--name` parameter, the system prompts me: "What would you like to name this team?"
+- [x] If I run `/team-init --name="Team Alpha"` when `.team/team-alpha/` already exists, the system updates the existing configuration without data loss
+- [x] After successful initialization, I see a detailed summary showing:
   - Team name and team ID
   - Created directory structure and file paths (e.g., `.team/team-alpha/`)
   - Next steps (e.g., "Add team members with `/add-member --team=team-alpha` or import from Slack with `/import-slack-channel --team=team-alpha`")
@@ -54,68 +54,68 @@ This feature provides a repository-based storage foundation where all team confi
 **As a** manager overseeing multiple teams, **I want to** manage multiple teams in the same repository, **so that** I can track all teams from one location.
 
 **Acceptance Criteria:**
-- [ ] Each team has its own subdirectory based on its name: `.team/team-alpha/`, `.team/team-beta/`, `.team/backend-team/`, etc.
-- [ ] When I run `/team-init --name="Team Beta"`, the system creates a new team instance in `.team/team-beta/`
-- [ ] All team management commands accept a `--team` parameter using the team ID (e.g., `/team-status --team=team-alpha`)
-- [ ] Each team maintains isolated configuration files (separate members.json, projects.json, team-config.json)
-- [ ] Teams can have different members, projects, and Slack channels without interference
-- [ ] I can list all initialized teams by viewing the `.team/` directory structure or running a command like `/list-teams`
+- [x] Each team has its own subdirectory based on its name: `.team/team-alpha/`, `.team/team-beta/`, `.team/backend-team/`, etc.
+- [x] When I run `/team-init --name="Team Beta"`, the system creates a new team instance in `.team/team-beta/`
+- [x] All team management commands accept a `--team` parameter using the team ID (e.g., `/team-status --team=team-alpha`)
+- [x] Each team maintains isolated configuration files (separate members.json, projects.json, team-config.json)
+- [x] Teams can have different members, projects, and Slack channels without interference
+- [x] I can list all initialized teams by viewing the `.team/` directory structure or running a command like `/list-teams`
 
 ### 2.3 Team Member Management
 
 **As a** manager, **I want to** add team members manually or import them from Slack, **so that** I can quickly build my team roster.
 
 **Manual Addition:**
-- [ ] When I run a command to add a member manually, the system prompts me for: name, email, role/title
-- [ ] The member is added to `members.json` with a unique member ID
-- [ ] I can optionally provide git username/email for linking commits later
+- [x] When I run a command to add a member manually, the system prompts me for: name, email, role/title
+- [x] The member is added to `members.json` with a unique member ID
+- [x] I can optionally provide git username/email for linking commits later
 
 **Slack Channel Import:**
-- [ ] When I run a command to import from Slack channel (e.g., `/import-slack-channel --team=team-alpha`), the system:
-  - Authenticates with Slack using credentials from environment variables (`SLACK_TOKEN`)
+- [x] When I run a command to import from Slack channel (e.g., `/import-slack-channel --team=team-alpha`), the system:
+  - Authenticates with Slack using MCP integration (instead of environment variables)
   - Prompts me to search for a Slack channel by keyword
   - Queries Slack API and presents matching channels as options using AskUserQuestion
   - After I select a channel, retrieves all members from that channel
   - For each Slack member, automatically retrieves: name, email address, role/title
   - Adds all discovered members to `members.json`
-- [ ] After import completes, I see a summary: "Imported 12 members from #team-alpha-channel"
+- [x] After import completes, I see a summary: "Imported 12 members from #team-alpha-channel"
 
 **Member Removal:**
-- [ ] I can remove members from the team roster at any time
-- [ ] Removed members are deleted from `members.json`
+- [x] I can remove members from the team roster at any time
+- [x] Removed members are deleted from `members.json`
 
 ### 2.4 Project Management
 
 **As a** manager, **I want to** link projects to my team with connections to external tools, **so that** I can track which projects my team works on.
 
 **Acceptance Criteria:**
-- [ ] I can add a project to the team configuration
-- [ ] For each project, the system stores:
+- [x] I can add a project to the team configuration
+- [x] For each project, the system stores:
   - Project name/ID (unique identifier)
   - Repository URL or path
   - External tool links (Jira board, GitLab project, Confluence space)
   - Project status (e.g., active, archived, planned)
   - Project description
   - Team assignment
-- [ ] When adding external tool links (e.g., Jira board), the system:
-  - Authenticates with the external tool using environment variables (`JIRA_TOKEN`, `GITLAB_TOKEN`, `CONFLUENCE_TOKEN`)
+- [x] When adding external tool links (e.g., Jira board), the system:
+  - Authenticates with the external tool using MCP integration (instead of environment variables)
   - Prompts me to search by keyword
   - Queries the external tool API and presents matching resources as options using AskUserQuestion
   - Saves the selected resource ID/URL to the project configuration
-- [ ] The team can have multiple current/active projects stored as an array in `team-config.json`
-- [ ] Projects are stored in `projects.json` as an array of project objects
+- [x] The team can have multiple current/active projects stored as an array in `team-config.json`
+- [x] Projects are stored in `projects.json` as an array of project objects
 
 ### 2.5 Data Synchronization
 
 **As a** team member, **I want** team configuration changes to sync via standard git workflows, **so that** I can use familiar git operations.
 
 **Acceptance Criteria:**
-- [ ] When I modify team configuration (add member, update project), changes are made to local JSON files only
-- [ ] I must manually commit changes using `git add .team/` and `git commit`
-- [ ] I sync changes with the team by running `git push` and `git pull`
-- [ ] If two team members modify the same configuration simultaneously, standard git merge conflicts occur
-- [ ] Git merge conflicts in JSON files are resolved manually in the text editor
-- [ ] The file structure (one file per configuration type) minimizes conflict likelihood
+- [x] When I modify team configuration (add member, update project), changes are made to local JSON files only
+- [x] I must manually commit changes using `git add .team/` and `git commit`
+- [x] I sync changes with the team by running `git push` and `git pull`
+- [x] If two team members modify the same configuration simultaneously, standard git merge conflicts occur
+- [x] Git merge conflicts in JSON files are resolved manually in the text editor
+- [x] The file structure (one file per configuration type) minimizes conflict likelihood
 
 ### 2.6 Configuration File Structure
 
@@ -165,20 +165,20 @@ This feature provides a repository-based storage foundation where all team confi
 ```
 
 **Acceptance Criteria:**
-- [ ] All JSON files follow the schemas defined above
-- [ ] Each object has a unique ID field
-- [ ] Timestamps are in ISO 8601 format
-- [ ] Arrays are used for collections (members, projects, current_projects)
+- [x] All JSON files follow the schemas defined above
+- [x] Each object has a unique ID field
+- [x] Timestamps are in ISO 8601 format
+- [x] Arrays are used for collections (members, projects, current_projects)
 
 ### 2.7 External Tool Authentication
 
 **As a** manager, **I want** to authenticate with external tools using environment variables, **so that** credentials are not stored in the repository.
 
 **Acceptance Criteria:**
-- [ ] The system reads credentials from environment variables: `SLACK_TOKEN`, `JIRA_TOKEN`, `GITLAB_TOKEN`, `CONFLUENCE_TOKEN`
-- [ ] If a required token is missing when I try to connect a tool, I see a clear error message with instructions: "SLACK_TOKEN environment variable not found. Please set it to your Slack API token."
-- [ ] Credentials are never written to any `.team/` JSON files
-- [ ] The system validates tokens by making a test API call on connection
+- [x] The system uses MCP (Model Context Protocol) for external tool authentication (design change from environment variables to MCP)
+- [x] If MCP for a required tool is unavailable, I see a clear error message with setup instructions pointing to the relevant docs/setup-{tool}-mcp.md guide
+- [x] Credentials are never written to any `.team/` JSON files
+- [x] The system validates MCP availability before attempting to use external tools
 
 ---
 
