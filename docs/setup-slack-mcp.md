@@ -48,25 +48,33 @@ The Slack MCP integration enables:
 
 ## Step 4: Configure Slack MCP
 
-Configure the MCP integration using a repository-local configuration file:
+Configure MCP credentials using the repository-local `.env` file.
 
-**Location:** `.mcp.json` in the repository root
+**Location:** `.env` in repository root
 
 **Setup Instructions:**
 
-1. Copy the example configuration:
+1. **Copy the example environment file:**
    ```bash
-   cp mcp-config-example.json .mcp.json
+   cp .env.example .env
    ```
 
-2. Edit `.mcp.json` and replace the Slack placeholders:
-   - Replace `YOUR_SLACK_BOT_TOKEN_HERE` with your Bot User OAuth Token from Step 3
-   - Replace `YOUR_SLACK_TEAM_ID_HERE` with your Slack workspace Team ID
-
-3. Verify `.mcp.json` is gitignored:
+2. **Edit `.env`** and add your Slack credentials:
    ```bash
-   git check-ignore .mcp.json  # Should output: .mcp.json
+   YOUR_SLACK_BOT_TOKEN_HERE=xoxb-xxxxxxxxxxxx-xxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx
+   YOUR_SLACK_TEAM_ID_HERE=T01XXXXXXXXX
    ```
+
+3. **Replace the placeholder values:**
+   - `YOUR_SLACK_BOT_TOKEN_HERE` → Your Bot User OAuth Token from Step 3
+   - `YOUR_SLACK_TEAM_ID_HERE` → Your Slack workspace Team ID
+
+4. **Verify `.env` is gitignored:**
+   ```bash
+   git check-ignore .env  # Should output: .env
+   ```
+
+**Important:** The `.env` file is already in `.gitignore` to prevent accidentally committing credentials. The `.mcp.json` file uses environment variable substitution (`${...}`) to read secrets from `.env`.
 
 **Finding Your Slack Team ID:**
 
@@ -75,7 +83,9 @@ Your Team ID can be found in several ways:
 - In your Slack app settings at [https://api.slack.com/apps](https://api.slack.com/apps) under "App Credentials"
 - Via API: `https://slack.com/api/auth.test` with your bot token
 
-**Example `.mcp.json` configuration:**
+**How it works:**
+
+The `.mcp.json` file is pre-configured with environment variable placeholders:
 
 ```json
 {
@@ -84,30 +94,32 @@ Your Team ID can be found in several ways:
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-slack"],
       "env": {
-        "SLACK_BOT_TOKEN": "xoxb-your-actual-token-here",
-        "SLACK_TEAM_ID": "T01234ABCDE"
+        "SLACK_BOT_TOKEN": "${YOUR_SLACK_BOT_TOKEN_HERE}",
+        "SLACK_TEAM_ID": "${YOUR_SLACK_TEAM_ID_HERE}"
       }
     }
   }
 }
 ```
 
-**Security Note:** The `.mcp.json` file is automatically gitignored to prevent credential leaks. Never commit this file to version control.
+The `${...}` syntax automatically reads values from your `.env` file.
+
+**Security Note:** The `.env` file is gitignored to prevent credential leaks. The `.mcp.json` file (with placeholders) is safe to commit to version control.
 
 ## Step 5: Manual Testing
 
-After configuring `.mcp.json`, verify the setup is correct:
+After configuring `.env`, verify the setup is correct:
 
 ### 5.1 Configuration Validation
 
 Run these commands to verify your configuration:
 
 ```bash
-# Verify .mcp.json file exists
-ls -la .mcp.json
+# Verify .env file exists
+ls -la .env
 
 # Verify it's gitignored (prevents accidental commits)
-git check-ignore .mcp.json  # Should output: .mcp.json
+git check-ignore .env  # Should output: .env
 
 # Verify JSON syntax is valid
 cat .mcp.json | jq .  # Should parse without errors

@@ -37,45 +37,39 @@ Same steps, but use your GitLab instance URL:
 
 ## Step 2: Configure GitLab MCP
 
-Configure MCP in your team management repository using the repo-local configuration file:
+Configure MCP credentials using the repository-local `.env` file.
 
-**Location:** `.mcp.json` in repository root
+**Location:** `.env` in repository root
 
 **Setup Instructions:**
 
-1. **Copy the example configuration file:**
+1. **Copy the example environment file:**
    ```bash
-   cp mcp-config-example.json .mcp.json
+   cp .env.example .env
    ```
 
-2. **Edit `.mcp.json`** and replace the GitLab placeholders:
-   ```json
-   {
-     "mcpServers": {
-       "gitlab": {
-         "command": "npx",
-         "args": ["-y", "@modelcontextprotocol/server-gitlab"],
-         "env": {
-           "GITLAB_PERSONAL_ACCESS_TOKEN": "YOUR_GITLAB_TOKEN_HERE",
-           "GITLAB_API_URL": "https://gitlab.com/api/v4"
-         }
-       }
-     }
-   }
+2. **Edit `.env`** and add your GitLab credentials:
+   ```bash
+   YOUR_GITLAB_TOKEN_HERE=glpat-xxxxxxxxxxxxxxxxxxxx
    ```
 
-3. **Replace the placeholder values:**
+3. **Replace the placeholder value:**
    - `YOUR_GITLAB_TOKEN_HERE` → Your personal access token from Step 1
-   - For **GitLab.com**, keep `https://gitlab.com/api/v4`
-   - For **self-hosted GitLab**, use `https://your-gitlab.com/api/v4`
 
-4. **Verify `.mcp.json` is gitignored:**
-   ```bash
-   git check-ignore .mcp.json
-   # Should output: .mcp.json
+4. **(Optional) For self-hosted GitLab:**
+
+   The `.mcp.json` file is pre-configured for GitLab.com. If using self-hosted GitLab, edit `.mcp.json` and change the API URL:
+   ```json
+   "GITLAB_API_URL": "https://your-gitlab.com/api/v4"
    ```
 
-**Important:** The `.mcp.json` file should already be in your `.gitignore` to prevent accidentally committing credentials. If the `git check-ignore` command doesn't output `.mcp.json`, add it to your `.gitignore` file immediately.
+5. **Verify `.env` is gitignored:**
+   ```bash
+   git check-ignore .env
+   # Should output: .env
+   ```
+
+**Important:** The `.env` file is already in `.gitignore` to prevent accidentally committing credentials. The `.mcp.json` file uses environment variable substitution (`${YOUR_GITLAB_TOKEN_HERE}`) to read secrets from `.env`.
 
 ## Step 3: Manual Testing
 
@@ -86,16 +80,16 @@ After configuring GitLab MCP, verify your setup is correct before using it:
 Run these commands to verify your configuration:
 
 ```bash
-# 1. Verify .mcp.json file exists
-ls -la .mcp.json
+# 1. Verify .env file exists
+ls -la .env
 
 # 2. Verify it's gitignored
-git check-ignore .mcp.json
-# Should output: .mcp.json
+git check-ignore .env
+# Should output: .env
 
-# 3. Verify JSON is valid
-cat .mcp.json | jq .
-# Should parse without errors
+# 3. Verify .env contains your GitLab token
+grep YOUR_GITLAB_TOKEN_HERE .env
+# Should show: YOUR_GITLAB_TOKEN_HERE=glpat-...
 ```
 
 ### GitLab MCP Connection Test
@@ -131,10 +125,10 @@ If you plan to link projects to GitLab repositories:
 **Symptoms:** Error message when running `/add-team-members` or skills fail to detect GitLab information
 
 **Solutions:**
-- Verify `.mcp.json` exists in the repository root (not `~/.claude/mcp.json`)
-- Check that the GitLab MCP configuration is correct in `.mcp.json`
-- Restart Claude Code after modifying `.mcp.json`
-- Ensure the `gitlab` section is present and properly formatted (run `cat .mcp.json | jq .` to validate JSON)
+- Verify `.env` exists in the repository root and contains `YOUR_GITLAB_TOKEN_HERE=...`
+- Check that `.mcp.json` exists in the repository root with the `gitlab` section
+- Restart Claude Code after modifying `.env`
+- Verify your GitLab token is set correctly: `grep YOUR_GITLAB_TOKEN_HERE .env`
 
 ### "Authentication Failed" Errors
 
@@ -211,9 +205,9 @@ If you plan to link projects to GitLab repositories:
 ## Security Best Practices
 
 1. **Never commit tokens to git**
-   - The `.mcp.json` file is already in `.gitignore` to prevent credential leaks
-   - Always verify `.mcp.json` is gitignored before committing: `git check-ignore .mcp.json`
-   - Never commit `mcp-config-example.json` with real credentials (it should only contain placeholders)
+   - The `.env` file is already in `.gitignore` to prevent credential leaks
+   - Always verify `.env` is gitignored before committing: `git check-ignore .env`
+   - The `.mcp.json` file only contains placeholders (`${...}`) and is safe to commit
 
 2. **Use minimal scope tokens**
    - Only enable `read_*` scopes (`read_api`, `read_user`, `read_repository`)
@@ -258,5 +252,5 @@ If you encounter issues:
      "https://gitlab.com/api/v4/users?search=name"
    ```
    Replace `your-token` with your actual token and adjust the URL for self-hosted instances.
-4. **Verify `.mcp.json` location:** Must be in the repository root, not in `~/.claude/`
-5. **Check JSON validity:** Run `cat .mcp.json | jq .` to ensure no syntax errors
+4. **Verify `.env` file exists:** Must be in the repository root with your GitLab token
+5. **Check token is set:** Run `grep YOUR_GITLAB_TOKEN_HERE .env` to verify

@@ -40,32 +40,39 @@ You'll need:
 
 ## Step 3: Configure Jira MCP
 
-### Using the Example Configuration
+### Using the Environment File
 
-This project includes an example MCP configuration file to help you get started:
+This project uses a `.env` file to store MCP credentials securely:
 
-1. **Copy the example configuration:**
+1. **Copy the example environment file:**
    ```bash
-   cp mcp-config-example.json .mcp.json
+   cp .env.example .env
    ```
 
-2. **Edit `.mcp.json`** and replace the placeholders in the `atlassian` server section:
-   - `YOUR_JIRA_URL` - Your Jira site URL (e.g., `https://your-company.atlassian.net`)
-   - `YOUR_JIRA_EMAIL` - Your Jira email address
-   - `YOUR_JIRA_API_TOKEN` - Your API token from Step 1
-
-3. **Verify `.mcp.json` is gitignored:**
+2. **Edit `.env`** and add your Jira credentials:
    ```bash
-   git check-ignore .mcp.json  # Should output: .mcp.json
+   YOUR_JIRA_EMAIL_HERE=your-email@example.com
+   YOUR_JIRA_CONFLUENCE_TOKEN_HERE=ATATT3xFfGF0xxxxxxxxxxxxx
    ```
 
-**Important:** The `.mcp.json` file is already in `.gitignore` to prevent accidentally committing credentials.
+3. **Replace the placeholder values:**
+   - `YOUR_JIRA_EMAIL_HERE` → Your Jira email address
+   - `YOUR_JIRA_CONFLUENCE_TOKEN_HERE` → Your API token from Step 1
 
-### Configuration Location
+4. **Verify `.env` is gitignored:**
+   ```bash
+   git check-ignore .env  # Should output: .env
+   ```
 
-**Location:** `.mcp.json` in the repository root (repo-local configuration)
+**Important:** The `.env` file is already in `.gitignore` to prevent accidentally committing credentials. The `.mcp.json` file uses environment variable substitution to read secrets from `.env`.
 
-The configuration uses the `atlassian` MCP server, which provides both Jira and Confluence integration:
+### How It Works
+
+**Configuration Files:**
+- **`.env`** - Contains your actual credentials (gitignored)
+- **`.mcp.json`** - Contains MCP server configuration with environment variable placeholders (checked into git)
+
+The `.mcp.json` file uses environment variable substitution with the `atlassian` MCP server:
 
 ```json
 {
@@ -73,34 +80,25 @@ The configuration uses the `atlassian` MCP server, which provides both Jira and 
     "atlassian": {
       "command": "npx",
       "args": [
-        "-y",
-        "@modelcontextprotocol/server-atlassian",
-        "--jira-url",
-        "https://your-company.atlassian.net",
-        "--jira-email",
-        "your-email@example.com",
-        "--jira-token",
-        "YOUR_API_TOKEN",
-        "--confluence-url",
-        "https://your-company.atlassian.net/wiki",
-        "--confluence-email",
-        "your-email@example.com",
-        "--confluence-token",
-        "YOUR_API_TOKEN"
-      ]
+        "mcp-remote",
+        "https://mcp.atlassian.com/v1/sse"
+      ],
+      "env": {
+        "ATLASSIAN_URL": "https://your-domain.atlassian.net",
+        "ATLASSIAN_EMAIL": "${YOUR_JIRA_EMAIL_HERE}",
+        "ATLASSIAN_API_TOKEN": "${YOUR_JIRA_CONFLUENCE_TOKEN_HERE}"
+      }
     }
   }
 }
 ```
 
-**Note:** Jira and Confluence typically share the same credentials when using Atlassian Cloud.
+**Note:**
+- The `${...}` syntax reads values from your `.env` file
+- Jira and Confluence share the same credentials when using Atlassian Cloud
+- You only need to edit the `ATLASSIAN_URL` if your domain differs
 
-**Replace:**
-- `your-company.atlassian.net` with your Jira site URL
-- `your-email@example.com` with your Jira email
-- `YOUR_API_TOKEN` with your API token from Step 1
-
-**Alternative: Environment Variables**
+**Alternative: Direct Configuration**
 
 For better security, use environment variables:
 
