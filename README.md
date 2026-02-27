@@ -65,6 +65,12 @@ A repository-based team management system for Claude Code that tracks team membe
 |---------|-------------|
 | `/add-project --team=<team-id>` | Add a project (supports external tool linking via MCP) |
 
+### Team Status & Reporting
+
+| Command | Description | MCP Requirements |
+|---------|-------------|------------------|
+| `/team-status [--team=<team-id>] [--member=<name>] ["query"]` | Display real-time team task status from Jira and GitLab | **Requires:** Jira MCP<br>**Optional:** GitLab MCP, Slack MCP |
+
 ## Data Structure
 
 All team data is stored in `.team/<team-id>/` directories:
@@ -135,12 +141,16 @@ MCP (Model Context Protocol) enables integration with external tools. Each integ
 
 | MCP | Feature | Setup Guide |
 |-----|---------|-------------|
-| **GitLab MCP** | Auto-detect git info when adding members | [docs/setup-gitlab-mcp.md](docs/setup-gitlab-mcp.md) |
-| **Slack MCP** | Import members from Slack channels | [docs/setup-slack-mcp.md](docs/setup-slack-mcp.md) |
-| **Jira MCP** | Link projects to Jira boards | [docs/setup-jira-mcp.md](docs/setup-jira-mcp.md) |
+| **GitLab MCP** | Auto-detect git info when adding members<br>Optional enhancement for `/team-status` | [docs/setup-gitlab-mcp.md](docs/setup-gitlab-mcp.md) |
+| **Slack MCP** | Import members from Slack channels<br>Optional enhancement for `/team-status` | [docs/setup-slack-mcp.md](docs/setup-slack-mcp.md) |
+| **Jira MCP** | Link projects to Jira boards<br>**Required for `/team-status`** | [docs/setup-jira-mcp.md](docs/setup-jira-mcp.md) |
 | **Confluence MCP** | Link projects to Confluence spaces | [docs/setup-confluence-mcp.md](docs/setup-confluence-mcp.md) |
 
-**Note:** All features work without MCP. MCP enhances functionality but is not required.
+**MCP Requirements:**
+- **Core team management** (team-init, add-team-members, add-project, list-teams, remove-team-member) works without any MCP
+- **`/team-status`** requires Jira MCP; GitLab and Slack MCPs are optional enhancements
+- **`/import-slack-channel`** requires Slack MCP
+- **GitLab MCP** enhances `/add-team-members` with auto-detection but is not required
 
 ## Architecture
 
@@ -162,6 +172,7 @@ User-facing commands implemented as Claude Code skills in `.claude/skills/`:
 - `remove-team-member/` - Remove members
 - `import-slack-channel/` - Import from Slack (requires Slack MCP)
 - `add-project/` - Add projects with optional external tool linking
+- `team-status/` - Real-time team status dashboard (requires Jira MCP)
 
 ### Design Principles
 
@@ -193,7 +204,8 @@ team-management/
 │       ├── add-team-members/
 │       ├── remove-team-member/
 │       ├── import-slack-channel/
-│       └── add-project/
+│       ├── add-project/
+│       └── team-status/
 ├── .team/                   # Team data (git-tracked)
 │   ├── team-alpha/
 │   └── team-beta/
@@ -216,18 +228,24 @@ team-management/
 - ✅ Project management (basic)
 - ✅ Multi-team support
 
-### Phase 2: Advanced Features (Planned)
+### Phase 2: Status & Reporting ✅ (Complete)
+- ✅ Real-time team status dashboard (`/team-status`)
+- ✅ Jira task integration
+- ✅ GitLab issues and MR tracking
+- ✅ Member filtering and natural language queries
+- ✅ Slack name enrichment
+
+### Phase 3: MCP Configuration ✅ (Complete)
+- ✅ GitLab MCP setup and documentation
+- ✅ Slack MCP setup and documentation
+- ✅ Jira MCP setup and documentation
+- ✅ Confluence MCP setup and documentation
+- ✅ Environment-based credential management
+
+### Phase 4: Advanced Features (Planned)
 - 🔲 Individual progress tracking
 - 🔲 Dependency and blocker management
-- 🔲 Task management integration
-
-### Phase 3: MCP Configuration (In Progress)
-- ⚠️ GitLab MCP setup and testing
-- ⚠️ Slack MCP setup and testing
-- ⚠️ Jira MCP setup and testing
-- ⚠️ Confluence MCP setup and testing
-
-### Phase 4: Advanced Integrations (Planned)
+- 🔲 Task assignment and updates
 - 🔲 Bi-directional sync with external tools
 - 🔲 Automated status detection
 - 🔲 Webhook support
