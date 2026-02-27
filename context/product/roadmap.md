@@ -17,7 +17,6 @@ _The highest priority features that form the core foundation of the team managem
   - [x] **Team Initialization:** Provide `/team-init` command to set up team management structure in the repository, supporting multiple team instances.
   - [x] **Team Listing:** Provide `/list-teams` command to view all initialized teams with member and project counts.
   - [x] **Member Management:** Provide `/add-team-members` command to add members manually (supports GitLab MCP auto-detection when configured).
-  - [ ] **Task Management Commands:** Enable creation, assignment, and status updates of tasks through dedicated CLI commands (`/create-task`, `/assign-task`, etc.).
   - [ ] **Real-time Status Dashboard:** Implement `/team-status` command to view all active tasks, assignments, and progress in formatted CLI output.
 
 - [ ] **Natural Language Interface**

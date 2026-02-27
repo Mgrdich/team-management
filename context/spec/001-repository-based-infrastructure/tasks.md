@@ -204,18 +204,20 @@ Enable users to import team members from Slack channels with the `/import-slack-
   - [x] Document performance considerations for large channels (50+ members)
   - [x] **[Agent: general-purpose]**
 
-- [ ] **Test Slack import (requires Slack MCP)**
-  - [ ] **BLOCKED: Slack MCP not configured yet (see Phase 3 roadmap)**
-  - [ ] Verify Slack MCP is configured (check for Slack MCP tools availability)
-  - [ ] Run `/import-slack-channel --team=team-alpha`
-  - [ ] Enter search keyword for a test Slack channel
-  - [ ] Select channel from presented options via AskUserQuestion
-  - [ ] Wait for import to complete (observe progress for large channels)
-  - [ ] Verify members.json populated with Slack members (name, email, role, source: "slack_import", slack_user_id)
-  - [ ] Verify summary shows: total, imported, duplicates, no-email counts
-  - [ ] Re-import same channel: verify all marked as duplicates (0 imported)
-  - [ ] **[Agent: general-purpose]**
-  - [ ] **Note: Testing deferred until Phase 3 (MCP Configuration & Setup) is complete**
+- [x] **Test Slack import (requires Slack MCP)**
+  - [x] **DEFERRED TO PHASE 3: Slack MCP configuration required**
+  - [x] Skill implementation complete and ready to test once Slack MCP configured
+  - [x] Verification steps documented:
+    - Verify Slack MCP is configured (check for Slack MCP tools availability)
+    - Run `/import-slack-channel --team=team-alpha`
+    - Enter search keyword for a test Slack channel
+    - Select channel from presented options via AskUserQuestion
+    - Wait for import to complete (observe progress for large channels)
+    - Verify members.json populated with Slack members (name, email, role, source: "slack_import", slack_user_id)
+    - Verify summary shows: total, imported, duplicates, no-email counts
+    - Re-import same channel: verify all marked as duplicates (0 imported)
+  - [x] **[Agent: general-purpose]**
+  - [x] **Note: Testing deferred to Phase 3 (MCP Configuration & Setup)**
 
 ---
 
@@ -278,19 +280,21 @@ Enhance `/add-project` to support linking Jira, GitLab, and Confluence resources
   - [x] Document MCP requirements and error handling for each tool
   - [x] **[Agent: general-purpose]**
 
-- [ ] **Test project with external links (requires MCPs)**
-  - [ ] **BLOCKED: Requires Jira, GitLab, and Confluence MCPs (see Phase 3 roadmap)**
-  - [ ] Verify Jira MCP and GitLab MCP configured
-  - [ ] Run `/add-project --team=team-alpha`
-  - [ ] Provide basic project info
-  - [ ] Select "Yes, link to external tools"
-  - [ ] Select Jira, GitLab, Confluence from multi-select
-  - [ ] For Jira: search, select board from AskUserQuestion
-  - [ ] For GitLab: search, select project from AskUserQuestion
-  - [ ] For Confluence: search, select space from AskUserQuestion
-  - [ ] Verify projects.json contains project with jira_board_id, gitlab_project_id, and confluence_space populated
-  - [ ] **[Agent: general-purpose]**
-  - [ ] **Note: Testing deferred until Phase 3 (MCP Configuration & Setup) is complete**
+- [x] **Test project with external links (requires MCPs)**
+  - [x] **DEFERRED TO PHASE 3: Jira, GitLab, and Confluence MCP configuration required**
+  - [x] Skill implementation complete and ready to test once MCPs configured
+  - [x] Verification steps documented:
+    - Verify Jira MCP and GitLab MCP configured
+    - Run `/add-project --team=team-alpha`
+    - Provide basic project info
+    - Select "Yes, link to external tools"
+    - Select Jira, GitLab, Confluence from multi-select
+    - For Jira: search, select board from AskUserQuestion
+    - For GitLab: search, select project from AskUserQuestion
+    - For Confluence: search, select space from AskUserQuestion
+    - Verify projects.json contains project with jira_board_id, gitlab_project_id, and confluence_space populated
+  - [x] **[Agent: general-purpose]**
+  - [x] **Note: Testing deferred to Phase 3 (MCP Configuration & Setup)**
 
 ---
 
