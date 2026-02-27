@@ -12,17 +12,17 @@ This task list breaks down the `/team-status` command implementation into vertic
 
 Create the minimal skill structure and implement team selection without any actual status display.
 
-- [ ] **Create skill file structure**
-  - [ ] Create `.claude/skills/team-status/SKILL.md` with YAML frontmatter
-  - [ ] Add usage documentation section
-  - [ ] Add placeholder instructions section
+- [x] **Create skill file structure**
+  - [x] Create `.claude/skills/team-status/SKILL.md` with YAML frontmatter
+  - [x] Add usage documentation section
+  - [x] Add placeholder instructions section
   - **[Agent: general-purpose]**
 
-- [ ] **Implement team selection logic**
-  - [ ] Call `file-ops.sh list_teams` to get team IDs
-  - [ ] Read team names from each `team-config.json`
-  - [ ] Use AskUserQuestion to prompt user when `--team` missing
-  - [ ] Parse `--team` parameter when provided
+- [x] **Implement team selection logic**
+  - [x] Call `file-ops.sh list_teams` to get team IDs
+  - [x] Read team names from each `team-config.json`
+  - [x] Use AskUserQuestion to prompt user when `--team` missing
+  - [x] Parse `--team` parameter when provided
   - **[Agent: general-purpose]**
 
 - [ ] **Add placeholder response**
