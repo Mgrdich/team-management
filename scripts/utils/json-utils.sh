@@ -29,10 +29,10 @@ validate_json() {
 # Arguments:
 #   $1 - team-id (identifier for the team)
 #   $2 - team-name (display name for the team)
-# Creates:
-#   - .team/[team-id]/team-config.json
-#   - .team/[team-id]/members.json
-#   - .team/[team-id]/projects.json
+# Creates or updates:
+#   - .team/[team-id]/team-config.json (updates if exists, preserves created_at and current_projects)
+#   - .team/[team-id]/members.json (preserves existing if present)
+#   - .team/[team-id]/projects.json (preserves existing if present)
 # Returns: 0 on success, 1 on failure
 write_initial_files() {
     local team_id="${1:?Team ID required}"
@@ -53,39 +53,61 @@ write_initial_files() {
         return 1
     fi
 
-    # Create team-config.json
+    # Handle team-config.json
     local config_file="${team_dir}/team-config.json"
-    local config_json
-    config_json=$(jq -n \
-        --arg team_id "$team_id" \
-        --arg team_name "$team_name" \
-        --arg created_at "$timestamp" \
-        --arg updated_at "$timestamp" \
-        '{
-            team_id: $team_id,
-            team_name: $team_name,
-            created_at: $created_at,
-            updated_at: $updated_at,
-            current_projects: []
-        }')
+    if [[ -f "$config_file" ]]; then
+        # Update existing config: preserve created_at and current_projects, update updated_at and team_name
+        jq --arg updated_at "$timestamp" \
+           --arg team_name "$team_name" \
+           '.updated_at = $updated_at | .team_name = $team_name' \
+           "$config_file" > "${config_file}.temp"
 
-    if ! validate_json "$config_json"; then
-        echo "Error: Failed to create valid team-config.json" >&2
-        return 1
+        # Validate the result
+        if ! validate_json "$(cat "${config_file}.temp")"; then
+            rm -f "${config_file}.temp"
+            echo "Error: Failed to create valid team-config.json after update" >&2
+            return 1
+        fi
+
+        mv "${config_file}.temp" "$config_file"
+    else
+        # Create new team-config.json
+        local config_json
+        config_json=$(jq -n \
+            --arg team_id "$team_id" \
+            --arg team_name "$team_name" \
+            --arg created_at "$timestamp" \
+            --arg updated_at "$timestamp" \
+            '{
+                team_id: $team_id,
+                team_name: $team_name,
+                created_at: $created_at,
+                updated_at: $updated_at,
+                current_projects: []
+            }')
+
+        if ! validate_json "$config_json"; then
+            echo "Error: Failed to create valid team-config.json" >&2
+            return 1
+        fi
+
+        echo "$config_json" > "${config_file}.temp"
+        mv "${config_file}.temp" "$config_file"
     fi
 
-    echo "$config_json" > "${config_file}.temp"
-    mv "${config_file}.temp" "$config_file"
-
-    # Create empty members.json
+    # Handle members.json - preserve if exists, create empty if not
     local members_file="${team_dir}/members.json"
-    echo "[]" > "${members_file}.temp"
-    mv "${members_file}.temp" "$members_file"
+    if [[ ! -f "$members_file" ]]; then
+        echo "[]" > "${members_file}.temp"
+        mv "${members_file}.temp" "$members_file"
+    fi
 
-    # Create empty projects.json
+    # Handle projects.json - preserve if exists, create empty if not
     local projects_file="${team_dir}/projects.json"
-    echo "[]" > "${projects_file}.temp"
-    mv "${projects_file}.temp" "$projects_file"
+    if [[ ! -f "$projects_file" ]]; then
+        echo "[]" > "${projects_file}.temp"
+        mv "${projects_file}.temp" "$projects_file"
+    fi
 
     return 0
 }

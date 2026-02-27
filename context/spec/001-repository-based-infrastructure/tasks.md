@@ -53,30 +53,30 @@ Build the foundational bash utility scripts needed by all other features.
 
 Enable users to initialize their first team with the `/team-init` command.
 
-- [ ] **Create `/team-init` skill**
-  - [ ] Create `.claude/commands/team-init.md` skill file
-  - [ ] Add frontmatter with description: "Initialize team management with a specific team name"
-  - [ ] Document usage: `/team-init --name="Team Name"`
-  - [ ] Document parameters: `--name` (required, max 63 chars)
-  - [ ] Document behavior:
+- [x] **Create `/team-init` skill**
+  - [x] Create `.claude/skills/team-init/SKILL.md` skill file
+  - [x] Add frontmatter with description: "Initialize team management with a specific team name"
+  - [x] Document usage: `/team-init --name="Team Name"`
+  - [x] Document parameters: `--name` (required, max 63 chars)
+  - [x] Document behavior:
     - Prompts for team name if not provided
     - Validates team name not empty
     - Calls bash utilities to convert name to ID, create structure, write JSON files
     - If team exists, preserves data (merge/update)
     - Displays detailed summary with paths and next steps
-  - [ ] Add examples section
-  - [ ] **[Agent: general-purpose]**
+  - [x] Add examples section
+  - [x] **[Agent: general-purpose]**
 
-- [ ] **Test team initialization**
-  - [ ] Run `/team-init --name="Test Team"` in Claude Code
-  - [ ] Verify `.team/test-team/` directory created
-  - [ ] Verify `team-config.json` exists with correct schema (team_id, team_name, created_at, current_projects array)
-  - [ ] Verify `members.json` exists as empty array: `[]`
-  - [ ] Verify `projects.json` exists as empty array: `[]`
-  - [ ] Verify detailed summary displays with team ID, paths, and next steps
-  - [ ] Test without `--name` parameter: verify prompts for team name
-  - [ ] Test re-initialization: add dummy data to members.json, run `/team-init --name="Test Team"` again, verify data preserved
-  - [ ] **[Agent: general-purpose]**
+- [x] **Test team initialization**
+  - [x] Run `/team-init --name="Test Team"` in Claude Code
+  - [x] Verify `.team/test-team/` directory created
+  - [x] Verify `team-config.json` exists with correct schema (team_id, team_name, created_at, current_projects array)
+  - [x] Verify `members.json` exists as empty array: `[]`
+  - [x] Verify `projects.json` exists as empty array: `[]`
+  - [x] Verify detailed summary displays with team ID, paths, and next steps
+  - [x] Test without `--name` parameter: verify prompts for team name
+  - [x] Test re-initialization: add dummy data to members.json, run `/team-init --name="Test Team"` again, verify data preserved
+  - [x] **[Agent: general-purpose]**
 
 ---
 
