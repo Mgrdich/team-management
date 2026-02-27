@@ -25,8 +25,8 @@ Create the minimal skill structure and implement team selection without any actu
   - [x] Parse `--team` parameter when provided
   - **[Agent: general-purpose]**
 
-- [ ] **Add placeholder response**
-  - [ ] Display message: "Team status feature coming soon for [team-name]"
+- [x] **Add placeholder response**
+  - [x] Display message: "Team status feature coming soon for [team-name]"
   - **[Agent: general-purpose]**
 
 - [ ] **Test Slice 1**
@@ -41,16 +41,16 @@ Create the minimal skill structure and implement team selection without any actu
 
 Fetch and display Jira tasks for a team in a basic table format.
 
-- [ ] **Implement Jira MCP availability check**
-  - [ ] Check for Jira MCP tools availability
-  - [ ] Display error if unavailable: "Jira MCP not configured..."
-  - [ ] Exit if Jira unavailable (Jira is required)
+- [x] **Implement Jira MCP availability check**
+  - [x] Check for Jira MCP tools availability
+  - [x] Display error if unavailable: "Jira MCP not configured..."
+  - [x] Exit if Jira unavailable (Jira is required)
   - **[Agent: general-purpose]**
 
-- [ ] **Load team members and projects**
-  - [ ] Read `members.json` and extract email addresses
-  - [ ] Read `projects.json` and extract Jira board IDs
-  - [ ] Build member lookup map (email → name)
+- [x] **Load team members and projects**
+  - [x] Read `members.json` and extract email addresses
+  - [x] Read `projects.json` and extract Jira board IDs
+  - [x] Build member lookup map (email → name)
   - **[Agent: general-purpose]**
 
 - [ ] **Query Jira via MCP**

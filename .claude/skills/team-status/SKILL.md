@@ -113,14 +113,76 @@ jq -r '.team_name' .team/<team-id>/team-config.json
 
 Store the team name for use in output messages.
 
-### Step 5: Display Placeholder Message
+### Step 5: Check Jira MCP Availability
 
-For now, display a placeholder message (will be replaced in subsequent slices).
+Verify that Jira MCP is available before proceeding.
 
 **Instructions:**
-Display: "Team status feature coming soon for [team-name]"
 
-Replace `[team-name]` with the actual team name from Step 4.
+1. **Check for Jira MCP tools:**
+   - Attempt to detect Jira MCP by checking if Jira-related tools are available
+   - Look for tools like `jira_search_issues` or similar Jira MCP functions
+
+2. **If Jira MCP is unavailable:**
+   - Display error message:
+     ```
+     Jira MCP not configured. Team status requires Jira integration.
+     See docs/setup-jira-mcp.md for setup instructions.
+     ```
+   - Exit the command (do not proceed)
+
+3. **If Jira MCP is available:**
+   - Proceed to the next step
+
+**Error Handling:**
+- Jira MCP is REQUIRED for team status functionality
+- Unlike GitLab and Slack MCPs (which are optional), the command cannot proceed without Jira MCP
+- Provide clear instructions pointing to the setup documentation
+
+### Step 6: Load Team Members and Projects
+
+Load team data needed for querying Jira.
+
+**Instructions:**
+
+1. **Read team members:**
+   ```bash
+   jq -r '.[]' .team/<team-id>/members.json
+   ```
+   Store the complete members array for later use.
+
+2. **Extract member email addresses:**
+   ```bash
+   jq -r '.[].email' .team/<team-id>/members.json
+   ```
+   Create a list of all member emails. This will be used in the Jira JQL query.
+
+3. **Build member lookup map:**
+   - Create a map with email as key and member data (name, role) as value
+   - This will be used to enrich Jira assignee data with team member names
+   - Example: `{"john@example.com": {"name": "John Doe", "role": "Engineer"}}`
+
+4. **Read team projects:**
+   ```bash
+   jq -r '.[]' .team/<team-id>/projects.json
+   ```
+
+5. **Extract Jira board/project IDs:**
+   ```bash
+   jq -r '.[] | select(.jira_board_id != null) | .jira_board_id' .team/<team-id>/projects.json
+   ```
+   Create a list of Jira board IDs or project keys. This will be used in the Jira JQL query.
+
+**Error Handling:**
+- If `members.json` doesn't exist or is empty, display: "No members found in team. Run /add-team-members to add members."
+- If `projects.json` doesn't exist, it's OK - we can still query by assignee emails
+- If JSON parsing fails, display: "Invalid JSON format in team data files. Please check members.json and projects.json."
+
+**Data Storage:**
+Store these values in variables for use in the next step (Jira query):
+- `member_emails` - Array of email addresses
+- `member_map` - Map of email to member data
+- `jira_project_ids` - Array of Jira board/project IDs
 
 ## Implementation Notes
 
