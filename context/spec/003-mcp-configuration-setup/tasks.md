@@ -85,6 +85,6 @@
 
 Since Phase 3 focuses on configuration files and documentation updates (no code implementation), all tasks are appropriately assigned to the `general-purpose` agent. No specialist agents are required for this phase.
 
-| Task/Slice | Issue | Recommendation |
-|------------|-------|----------------|
+| Task/Slice | Issue                                                           | Recommendation                                                                                             |
+|------------|-----------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
 | All slices | Documentation and configuration work uses general-purpose agent | This is appropriate—no specialist agents needed for JSON/Markdown file editing and manual testing guidance |

@@ -2,32 +2,24 @@
   "$schema": "https://modelcontextprotocol.io/schema/mcp-config.json",
   "__comment": "This is an example MCP configuration file for team-management integrations. Copy this file to .mcp.json and replace all YOUR_*_HERE placeholders with actual credentials. The .mcp.json file is gitignored to prevent credential leaks.",
   "mcpServers": {
-    "gitlab": {
+    "GitLab": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-gitlab"],
+      "args": [
+        "mcp-remote"
+      ],
       "env": {
-        "GITLAB_PERSONAL_ACCESS_TOKEN": "${YOUR_GITLAB_TOKEN_HERE}",
-        "GITLAB_API_URL": "${YOUR_GITLAB_API_URL_HERE}"
+        "GITLAB_PERSONAL_TOKEN": "${YOUR_GITLAB_TOKEN_HERE}"
       }
     },
     "atlassian": {
       "command": "npx",
       "args": [
-        "mcp-remote",
-        "https://mcp.atlassian.com/v1/sse"
+        "mcp-remote"
       ],
       "env": {
-        "ATLASSIAN_URL": "https://your-domain.atlassian.net",
+        "ATLASSIAN_URL": "${YOUR_JIRA_URL_HERE}",
         "ATLASSIAN_EMAIL": "${YOUR_JIRA_EMAIL_HERE}",
         "ATLASSIAN_API_TOKEN": "${YOUR_JIRA_CONFLUENCE_TOKEN_HERE}"
-      }
-    },
-    "slack": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-slack"],
-      "env": {
-        "SLACK_BOT_TOKEN": "${YOUR_SLACK_BOT_TOKEN_HERE}",
-        "SLACK_TEAM_ID": "${YOUR_SLACK_TEAM_ID_HERE}"
       }
     }
   }
