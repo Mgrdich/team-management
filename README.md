@@ -67,8 +67,8 @@ A repository-based team management system for Claude Code that tracks team membe
 
 ### Team Status & Reporting
 
-| Command                                                       | Description                                             | Requirements                                                         |
-|---------------------------------------------------------------|---------------------------------------------------------|----------------------------------------------------------------------|
+| Command                                                       | Description                                             | Requirements                                                  |
+|---------------------------------------------------------------|---------------------------------------------------------|---------------------------------------------------------------|
 | `/team-status [--team=<team-id>] [--member=<name>] ["query"]` | Display real-time team task status from Jira and GitLab | **Requires:** Jira MCP<br>**Optional:** `glab` CLI, Slack MCP |
 
 ## Data Structure
