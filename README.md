@@ -137,14 +137,48 @@ All team data is stored in `.team/<team-id>/` directories:
 
 MCP (Model Context Protocol) enables integration with external tools. Each integration is optional and independent.
 
+### GitLab CLI Setup
+
+Configure the GitLab CLI (`glab`) for enhanced Git integration:
+
+```bash
+# Install glab (if not already installed)
+# macOS:
+brew install glab
+
+# Follow prompts to authenticate with your GitLab account
+glab auth login
+```
+
 ### Available MCP Integrations
 
-| MCP | Feature | Setup Guide |
-|-----|---------|-------------|
-| **GitLab MCP** | Auto-detect git info when adding members<br>Optional enhancement for `/team-status` | [docs/setup-gitlab-mcp.md](docs/setup-gitlab-mcp.md) |
-| **Slack MCP** | Import members from Slack channels<br>Optional enhancement for `/team-status` | [docs/setup-slack-mcp.md](docs/setup-slack-mcp.md) |
-| **Jira MCP** | Link projects to Jira boards<br>**Required for `/team-status`** | [docs/setup-jira-mcp.md](docs/setup-jira-mcp.md) |
-| **Confluence MCP** | Link projects to Confluence spaces | [docs/setup-confluence-mcp.md](docs/setup-confluence-mcp.md) |
+| MCP                | Feature                                                                             | Setup Guide                                                  |
+|--------------------|-------------------------------------------------------------------------------------|--------------------------------------------------------------|
+| **GitLab MCP**     | Auto-detect git info when adding members<br>Optional enhancement for `/team-status` | [docs/setup-gitlab-mcp.md](docs/setup-gitlab-mcp.md)         |
+| **Jira MCP**       | Link projects to Jira boards<br>**Required for `/team-status`**                     | [docs/setup-jira-mcp.md](docs/setup-jira-mcp.md)             |
+| **Confluence MCP** | Link projects to Confluence spaces                                                  | [docs/setup-confluence-mcp.md](docs/setup-confluence-mcp.md) |
+
+### Quick MCP Setup (LiveNation)
+
+```bash
+# Configure Jira MCP server
+claude mcp add \
+  --transport http \
+  jira \
+  --header "Authorization: Token <token>" \
+  --scope user \
+  https://mcp.jira.domain.com/mcp/
+
+# Configure Confluence MCP server
+claude mcp add \
+  --transport http \
+  confluence \
+  --header "Authorization: Token <token>" \
+  --scope user \
+  https://mcp.confluence.domain.com/mcp/
+```
+
+**Note:** Replace `<token>` with your API token. See setup guides for detailed instructions.
 
 **MCP Requirements:**
 - **Core team management** (team-init, add-team-members, add-project, list-teams, remove-team-member) works without any MCP

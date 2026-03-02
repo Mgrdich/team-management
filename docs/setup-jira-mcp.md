@@ -40,7 +40,36 @@ You'll need:
 
 ## Step 3: Configure Jira MCP
 
-### Using the Environment File
+### Option 1: LiveNation MCP Server (Recommended)
+
+If you're using LiveNation's hosted MCP servers, use the `claude mcp add` command:
+
+```bash
+claude mcp add \
+  --transport http \
+  jira \
+  --header "Authorization: Token <token>" \
+  --scope user \
+  https://mcp.jira.livenation.com/mcp/
+```
+
+**Replace `<token>`** with your Jira API token from Step 1.
+
+**Benefits:**
+- Hosted MCP server (no local installation)
+- HTTP transport for simplified configuration
+- Enterprise-ready with centralized management
+
+**Verification:**
+```bash
+# List configured MCP servers
+claude mcp list
+
+# Test Jira connection
+# In Claude Code, try using a Jira MCP tool
+```
+
+### Option 2: Using the Environment File
 
 This project uses a `.env` file to store MCP credentials securely:
 

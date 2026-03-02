@@ -40,6 +40,37 @@ You'll need:
 
 ## Step 3: Configure Confluence MCP
 
+### Option 1: LiveNation MCP Server (Recommended)
+
+If you're using LiveNation's hosted MCP servers, use the `claude mcp add` command:
+
+```bash
+claude mcp add \
+  --transport http \
+  confluence \
+  --header "Authorization: Token <token>" \
+  --scope user \
+  https://mcp.confluence.livenation.com/mcp/
+```
+
+**Replace `<token>`** with your Confluence API token from Step 1.
+
+**Benefits:**
+- Hosted MCP server (no local installation)
+- HTTP transport for simplified configuration
+- Enterprise-ready with centralized management
+
+**Verification:**
+```bash
+# List configured MCP servers
+claude mcp list
+
+# Test Confluence connection
+# In Claude Code, try using a Confluence MCP tool
+```
+
+### Option 2: Using the Environment File
+
 This project uses a **repository-local `.env`** file for MCP configuration.
 
 **Important:** Confluence and Jira share the same `atlassian` MCP server configuration. If you've already configured Jira MCP, you can skip this step - the same configuration handles both services.
