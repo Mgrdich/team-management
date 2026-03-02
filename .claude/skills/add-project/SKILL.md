@@ -216,7 +216,7 @@ AskUserQuestion parameters:
 **If user selects "None":**
 - Skip Jira linking
 
-### Step 9: Link GitLab Project (if selected)
+### Step 9: Link GitLab Projects (if selected)
 
 **Step 9.1: Check glab CLI Availability**
 
@@ -267,19 +267,19 @@ glab api projects --paginate -f "search=<keyword>" | jq '.[] | {id, name, path_w
 **Use the `AskUserQuestion` tool**:
 ```
 AskUserQuestion parameters:
-- Question: "Which GitLab project would you like to link?"
-- Header: "Select project"
+- Question: "Which GitLab projects would you like to link?"
+- Header: "Select projects"
 - Options: Present each project from glab output with format:
   - Label: "<project-name>"
   - Description: "<namespace>/<project-path>"
 - Add option:
   - Label: "None"
   - Description: "Skip GitLab linking"
-- multiSelect: false
+- multiSelect: true  # Allow selecting multiple projects
 ```
 
-**If user selects a project:**
-- Store the project ID in variable: `gitlab_project_id="<selected-project-id>"`
+**If user selects one or more projects:**
+- Store the project IDs in an array variable: `gitlab_project_ids=("<selected-project-id-1>" "<selected-project-id-2>" ...)`
 
 **If user selects "None":**
 - Skip GitLab linking
@@ -393,9 +393,11 @@ if [[ -n "$jira_board_id" ]]; then
     '. + {jira_board_id: $jira_board_id}')
 fi
 
-if [[ -n "$gitlab_project_id" ]]; then
-  project_json=$(echo "$project_json" | jq --arg gitlab_project_id "$gitlab_project_id" \
-    '. + {gitlab_project_id: $gitlab_project_id}')
+if [[ ${#gitlab_project_ids[@]} -gt 0 ]]; then
+  # Convert bash array to JSON array
+  gitlab_json_array=$(printf '%s\n' "${gitlab_project_ids[@]}" | jq -R . | jq -s .)
+  project_json=$(echo "$project_json" | jq --argjson gitlab_project_ids "$gitlab_json_array" \
+    '. + {gitlab_project_ids: $gitlab_project_ids}')
 fi
 
 if [[ -n "$confluence_space" ]]; then
@@ -445,7 +447,7 @@ Project Details:
   Description: <description> (or "None" if not provided)
   External Links:
     - Jira Board: <jira_board_id> (or "None")
-    - GitLab Project: <gitlab_project_id> (or "None")
+    - GitLab Projects: <comma-separated-list-of-gitlab_project_ids> (or "None")
     - Confluence Space: <confluence_space> (or "None")
   Created: <created-at>
 
@@ -620,7 +622,7 @@ The basic project object includes:
 
 **NOT included in basic version:**
 - `jira_board_id` - Will be added in Slice 8
-- `gitlab_project_id` - Will be added in Slice 8
+- `gitlab_project_ids` - Will be added in Slice 8 (array of GitLab project IDs)
 - `confluence_space` - Will be added in Slice 8
 
 ### Status Values
