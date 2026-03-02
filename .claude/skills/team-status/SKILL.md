@@ -931,6 +931,15 @@ Filter the task list to show only tasks for the selected member (if `--member` p
    - Store assignee email in task objects during Steps 7/8 (alongside assignee name)
    - Filter by comparing `task.assignee_email` with `selected_member.email`
 
+   **Helper Script:**
+   - A helper script is available at `./scripts/utils/filter-member-tasks.sh`
+   - Usage: `./scripts/utils/filter-member-tasks.sh <jira-json-file> <member-email> <member-name>`
+   - This script filters Jira JSON output for a specific member and formats for display
+   - Example:
+     ```bash
+     ./scripts/utils/filter-member-tasks.sh /path/to/jira-output.json "esteban.rodriguez@ticketmaster.com" "Esteban Rodriguez"
+     ```
+
 3. **Handle empty results:**
    - If filtered list is empty (no tasks found for member):
      - Display message:
@@ -1689,6 +1698,38 @@ The skill is successful when:
 3. Results are filtered based on member or query parameters if provided
 4. Output is formatted as a clean table with relevant columns
 5. Errors are handled gracefully (MCP unavailable, team not found, etc.)
+
+## Helper Scripts
+
+This skill uses helper scripts located in `./scripts/utils/`:
+
+### filter-member-tasks.sh
+
+Filters Jira JSON output to show tasks for a specific team member.
+
+**Location:** `./scripts/utils/filter-member-tasks.sh`
+
+**Usage:**
+```bash
+./scripts/utils/filter-member-tasks.sh <jira-json-file> <member-email> <member-name>
+```
+
+**Parameters:**
+- `jira-json-file` - Path to the Jira JSON response file
+- `member-email` - Email address of the team member (e.g., "joe.rodriguez@t.com")
+- `member-name` - Display name of the member (e.g., "Esteban Rodriguez")
+
+**Example:**
+```bash
+./scripts/utils/filter-member-tasks.sh /tmp/jira-output.json \
+  "joe.rodriguez@t.com" \
+  "Joe Rodriguez"
+```
+
+**Output:**
+Returns pipe-delimited task data: `TASK-ID|Title|Status`
+
+This script is used internally by Step 10 when filtering tasks by member.
 
 ## Related Skills
 
