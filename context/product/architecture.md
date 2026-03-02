@@ -43,11 +43,13 @@
   - If MCP is available, use it; if not, fall back gracefully
   - No upfront validation or state storage required
 
-- **GitLab Integration (if GitLab MCP available):**
+- **GitLab Integration (via `glab` CLI):**
   - Issue synchronization
   - Merge request tracking
   - Commit activity monitoring
   - Pipeline status
+  - Authentication: `glab auth login`
+  - No MCP server required - uses direct CLI commands
 
 - **Jira Integration (if Atlassian MCP available):**
   - Bi-directional ticket synchronization
@@ -64,7 +66,7 @@
   - Conversational queries
 
 - **Progress Tracking Strategy:**
-  - **If GitLab MCP available:** Primary progress tracking from GitLab commits, MRs, and issues
+  - **If `glab` CLI authenticated:** Primary progress tracking from GitLab commits, MRs, and issues
   - **If Jira MCP available:** Primary progress tracking from Jira ticket status updates
   - **If both available:** Sync progress between both systems
   - **If neither available:** Local-only progress tracking from git commits and manual status updates
@@ -157,7 +159,7 @@
   - Developer documentation in `docs/` directory
   - Architecture decision records (ADRs) for significant technical decisions
   - **Integration Setup Guides (in `docs/`):**
-    - GitLab MCP setup guide
+    - GitLab CLI (`glab`) authentication guide
     - Jira/Confluence MCP setup guide
     - Slack MCP setup guide
     - Common troubleshooting tips

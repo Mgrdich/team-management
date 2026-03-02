@@ -46,30 +46,30 @@ A repository-based team management system for Claude Code that tracks team membe
 
 ### Team Management
 
-| Command | Description |
-|---------|-------------|
-| `/team-init --name="Team Name"` | Initialize a new team |
-| `/list-teams` | List all teams with member/project counts |
+| Command                         | Description                               |
+|---------------------------------|-------------------------------------------|
+| `/team-init --name="Team Name"` | Initialize a new team                     |
+| `/list-teams`                   | List all teams with member/project counts |
 
 ### Member Management
 
-| Command | Description |
-|---------|-------------|
-| `/add-team-members --team=<team-id>` | Add members manually (supports GitLab MCP auto-detection) |
-| `/remove-team-member --team=<team-id>` | Remove a member from a team |
+| Command                                  | Description                                            |
+|------------------------------------------|--------------------------------------------------------|
+| `/add-team-members --team=<team-id>`     | Add members manually (supports `glab` CLI auto-detect) |
+| `/remove-team-member --team=<team-id>`   | Remove a member from a team                            |
 | `/import-slack-channel --team=<team-id>` | Import members from Slack channel (requires Slack MCP) |
 
 ### Project Management
 
-| Command | Description |
-|---------|-------------|
+| Command                         | Description                                            |
+|---------------------------------|--------------------------------------------------------|
 | `/add-project --team=<team-id>` | Add a project (supports external tool linking via MCP) |
 
 ### Team Status & Reporting
 
-| Command | Description | MCP Requirements |
-|---------|-------------|------------------|
-| `/team-status [--team=<team-id>] [--member=<name>] ["query"]` | Display real-time team task status from Jira and GitLab | **Requires:** Jira MCP<br>**Optional:** GitLab MCP, Slack MCP |
+| Command                                                       | Description                                             | Requirements                                                         |
+|---------------------------------------------------------------|---------------------------------------------------------|----------------------------------------------------------------------|
+| `/team-status [--team=<team-id>] [--member=<name>] ["query"]` | Display real-time team task status from Jira and GitLab | **Requires:** Jira MCP<br>**Optional:** `glab` CLI, Slack MCP |
 
 ## Data Structure
 
@@ -109,8 +109,8 @@ All team data is stored in `.team/<team-id>/` directories:
   "role": "Engineer",
   "added_at": "2026-02-27T17:20:56Z",
   "source": "manual",
-  "git_username": "jdoe",           // Optional (from GitLab MCP)
-  "git_email": "jdoe@github.com",   // Optional (from GitLab MCP)
+  "git_username": "jdoe",           // Optional (from glab CLI)
+  "git_email": "jdoe@github.com",   // Optional (from glab CLI)
   "slack_user_id": "U1234567"       // Optional (from Slack import)
 }
 ```
@@ -137,24 +137,38 @@ All team data is stored in `.team/<team-id>/` directories:
 
 MCP (Model Context Protocol) enables integration with external tools. Each integration is optional and independent.
 
-### GitLab CLI Setup
+### GitLab CLI Setup (Recommended)
 
-Configure the GitLab CLI (`glab`) for enhanced Git integration:
+**The team management system uses `glab` CLI for GitLab integration instead of GitLab MCP.**
+
+Configure the GitLab CLI:
 
 ```bash
 # Install glab (if not already installed)
 # macOS:
 brew install glab
 
-# Follow prompts to authenticate with your GitLab account
+# Ubuntu/Debian:
+sudo apt install glab
+
+# Authenticate with your GitLab account
 glab auth login
+
+# Verify authentication
+glab auth status
 ```
+
+**Why `glab` instead of GitLab MCP?**
+- Direct CLI tool integration (no MCP server needed)
+- Better performance and reliability
+- Simpler authentication flow
+- Native GitLab API support
 
 ### Available MCP Integrations
 
-| MCP                | Feature                                                                             | Setup Guide                                                  |
+| Tool/MCP           | Feature                                                                             | Setup Guide                                                  |
 |--------------------|-------------------------------------------------------------------------------------|--------------------------------------------------------------|
-| **GitLab MCP**     | Auto-detect git info when adding members<br>Optional enhancement for `/team-status` | [docs/setup-gitlab-mcp.md](docs/setup-gitlab-mcp.md)         |
+| **`glab` CLI**     | GitLab issues, merge requests, and pipeline status<br>**Recommended for GitLab**    | See GitLab CLI Setup above                                   |
 | **Jira MCP**       | Link projects to Jira boards<br>**Required for `/team-status`**                     | [docs/setup-jira-mcp.md](docs/setup-jira-mcp.md)             |
 | **Confluence MCP** | Link projects to Confluence spaces                                                  | [docs/setup-confluence-mcp.md](docs/setup-confluence-mcp.md) |
 
@@ -180,11 +194,11 @@ claude mcp add \
 
 **Note:** Replace `<token>` with your API token. See setup guides for detailed instructions.
 
-**MCP Requirements:**
-- **Core team management** (team-init, add-team-members, add-project, list-teams, remove-team-member) works without any MCP
-- **`/team-status`** requires Jira MCP; GitLab and Slack MCPs are optional enhancements
+**Integration Requirements:**
+- **Core team management** (team-init, add-team-members, add-project, list-teams, remove-team-member) works without any integrations
+- **`/team-status`** requires Jira MCP; `glab` CLI is optional for GitLab data
 - **`/import-slack-channel`** requires Slack MCP
-- **GitLab MCP** enhances `/add-team-members` with auto-detection but is not required
+- **`glab` CLI** enhances `/team-status` with GitLab merge requests and issues
 
 ## Architecture
 
