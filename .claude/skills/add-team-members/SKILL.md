@@ -81,30 +81,31 @@ Please provide the member details (one per line):
 - Ensure email is not empty
 - If any field is missing, ask again
 
-### Step 6: Search GitLab for Member via MCP (Auto-populate Git Info)
+### Step 6: Search GitLab for Member via glab CLI (Auto-populate Git Info)
 
-Attempt to automatically find the member's GitLab account based on their name using the GitLab MCP (Model Context Protocol) integration.
+Attempt to automatically find the member's GitLab account based on their name using the `glab` CLI tool.
 
-**Step 6.1: Check GitLab MCP Availability**
+**Step 6.1: Check glab CLI Availability**
 
-Check if GitLab MCP tools are available by looking for the `gitlab_` tool prefix in the available MCP tools.
+Check if `glab` CLI is available by running:
 
-**Important:** The GitLab connection is through MCP (Model Context Protocol), not direct API calls.
+```bash
+glab auth status 2>/dev/null
+```
 
-**Step 6.2: Search GitLab by Name via MCP**
+**Important:** The GitLab connection is through the `glab` CLI tool, not MCP.
 
-If GitLab MCP is available:
+**Step 6.2: Search GitLab by Name via glab CLI**
+
+If `glab` CLI is available and authenticated:
 
 1. Extract first and last name from the member's full name
    - Example: "John Doe" → first: "John", last: "Doe"
 
-2. Search for GitLab users matching the name via MCP:
-   ```
-   Use the GitLab MCP search_users tool/function if available
-   Search query: "<first-name> <last-name>"
-
-   Note: This calls GitLab through the MCP (Model Context Protocol) integration,
-   not through direct API calls.
+2. Search for GitLab users matching the name via `glab`:
+   ```bash
+   # Search for users matching the name
+   glab api users --paginate -f "search=<first-name> <last-name>" | jq '.[] | {username, name, email}'
    ```
 
 3. If results are found, **use the `AskUserQuestion` tool** to present options:
@@ -115,7 +116,7 @@ If GitLab MCP is available:
    AskUserQuestion parameters:
    - Question: "Is this the correct GitLab account for <member-name>?"
    - Header: "GitLab user"
-   - Options: Present each matching user from GitLab MCP with format:
+   - Options: Present each matching user from glab output with format:
      - Label: "<username>"
      - Description: "<full-name> - <email>"
    - Add final option:
@@ -146,17 +147,18 @@ If GitLab MCP is available:
    - If yes, prompt in plain text for git username and git email
    - If no, skip git information
 
-**Step 6.3: Fallback (No GitLab MCP)**
+**Step 6.3: Fallback (No glab CLI)**
 
-If GitLab MCP is not available:
+If `glab` CLI is not available or not authenticated:
 
 **Error Handling:**
-- If GitLab MCP is not available, display error:
+- If `glab` CLI is not available, display message:
   ```
-  Error: GitLab MCP not configured.
+  Note: glab CLI not configured or not authenticated.
 
-  To use this feature, configure GitLab MCP integration.
-  See documentation: docs/setup-gitlab-mcp.md
+  To use GitLab auto-detection, install and authenticate glab:
+  - Install: brew install glab (macOS)
+  - Authenticate: glab auth login
 
   GitLab auto-detection unavailable. You can manually enter Git information.
   ```
@@ -182,7 +184,7 @@ Please provide Git information:
 ```
 
 **Error Handling:**
-- If GitLab MCP call fails, fall back to manual entry option
+- If `glab` CLI call fails, fall back to manual entry option
 - If search times out, notify user and offer manual entry
 
 ### Step 7: Generate Member ID
@@ -294,7 +296,7 @@ View all members: /list-teams
 
 ## Example Scenarios
 
-### Example 1: Add Single Member (GitLab MCP Auto-Detection)
+### Example 1: Add Single Member (GitLab glab CLI Auto-Detection)
 
 ```
 User: /add-team-members --team=team-alpha
@@ -309,16 +311,16 @@ Name: John Doe
 Email: john@example.com
 Role: Senior Engineer
 
-Claude: [Searches GitLab via MCP for "John Doe"]
+Claude: [Searches GitLab via glab CLI for "John Doe"]
 Claude: Is this the correct GitLab account for John Doe?
-[Shows options from GitLab MCP:]
+[Shows options from glab CLI:]
   - jdoe (John Doe - jdoe@company.com)
   - johndoe (J. Doe - john.doe@company.com)
   - None of these
 
 User: [Selects "jdoe"]
 
-Claude: ✓ Linked to GitLab: @jdoe (via MCP)
+Claude: ✓ Linked to GitLab: @jdoe
 Claude: ✓ Added John Doe (john@example.com) as Senior Engineer
 
 Claude: Would you like to add another member to Team Alpha?

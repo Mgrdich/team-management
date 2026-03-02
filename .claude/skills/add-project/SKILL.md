@@ -218,14 +218,28 @@ AskUserQuestion parameters:
 
 ### Step 9: Link GitLab Project (if selected)
 
-**Step 9.1: Check GitLab MCP Availability**
+**Step 9.1: Check glab CLI Availability**
 
-Check if GitLab MCP tools are available.
+Check if `glab` CLI is available and authenticated:
 
-**Important:** The GitLab connection is through MCP (Model Context Protocol), not direct API calls.
+```bash
+glab auth status 2>/dev/null
+```
+
+**Important:** The GitLab connection is through the `glab` CLI tool, not MCP.
 
 **Error Handling:**
-- If GitLab MCP not available, display warning and skip GitLab linking
+- If `glab` CLI not available or not authenticated, display warning:
+  ```
+  Note: glab CLI not configured or not authenticated.
+
+  To link GitLab projects, install and authenticate glab:
+  - Install: brew install glab (macOS)
+  - Authenticate: glab auth login
+
+  Skipping GitLab linking for this project.
+  ```
+- Skip GitLab linking and continue to next tool
 
 **Step 9.2: Search for GitLab Projects**
 
@@ -235,12 +249,17 @@ Please enter a keyword to search for GitLab projects:
 (e.g., "auth-service", "api", "frontend")
 ```
 
-**Step 9.3: Call GitLab MCP to Search Projects**
+**Step 9.3: Call glab CLI to Search Projects**
 
-Use GitLab MCP to search for projects matching the keyword.
+Use `glab` CLI to search for projects matching the keyword:
+
+```bash
+# Search for projects using the API
+glab api projects --paginate -f "search=<keyword>" | jq '.[] | {id, name, path_with_namespace}'
+```
 
 **Error Handling:**
-- If MCP call fails, display error and skip GitLab linking
+- If `glab` CLI call fails, display error and skip GitLab linking
 - If no projects found, display: "No GitLab projects found matching '<keyword>'. Skipping GitLab linking."
 
 **Step 9.4: Present Project Options**
@@ -250,7 +269,7 @@ Use GitLab MCP to search for projects matching the keyword.
 AskUserQuestion parameters:
 - Question: "Which GitLab project would you like to link?"
 - Header: "Select project"
-- Options: Present each project with format:
+- Options: Present each project from glab output with format:
   - Label: "<project-name>"
   - Description: "<namespace>/<project-path>"
 - Add option:
@@ -690,16 +709,16 @@ Verify these exist before execution if troubleshooting is needed.
 
 ## External Tool Integration
 
-This skill now supports linking projects to external tools via MCP:
+This skill now supports linking projects to external tools:
 - **Jira boards** (via Jira/Atlassian MCP)
-- **GitLab projects** (via GitLab MCP)
+- **GitLab projects** (via `glab` CLI)
 - **Confluence spaces** (via Confluence/Atlassian MCP)
 
-External tool linking is optional. Projects can be created without any external links. When MCPs are configured, the skill will search and present options from each tool for easy linking.
+External tool linking is optional. Projects can be created without any external links. When tools are configured, the skill will search and present options from each tool for easy linking.
 
-**MCP Requirements:**
+**Tool Requirements:**
 - Jira linking requires Jira MCP or Atlassian MCP
-- GitLab linking requires GitLab MCP
+- GitLab linking requires `glab` CLI (install: `brew install glab`, authenticate: `glab auth login`)
 - Confluence linking requires Confluence MCP or Atlassian MCP
 
-If an MCP is not configured, the skill will display a warning and skip linking for that tool.
+If a tool is not configured, the skill will display a warning and skip linking for that tool.

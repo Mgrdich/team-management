@@ -291,43 +291,36 @@ Verify that MCP integrations are available before proceeding.
    - Attempt to detect Jira MCP by checking if Jira-related tools are available
    - Look for tools like `jira_search_issues` or similar Jira MCP functions
 
-2. **Check for GitLab MCP tools:**
-   - Attempt to detect GitLab MCP by checking if GitLab-related tools are available
-   - Look for tools like `gitlab_get_project_issues` or similar GitLab MCP functions
+2. **Check for glab CLI availability:**
+   - Attempt to detect `glab` CLI by running:
+     ```bash
+     glab auth status 2>/dev/null
+     ```
+   - Check the exit code: 0 means authenticated, non-zero means not available/authenticated
 
-3. **Handle MCP availability:**
+3. **Handle tool availability:**
 
-   **If both MCP integrations are unavailable:**
+   **If Jira MCP is unavailable:**
    - Display error message:
      ```
-     Error: MCP integrations not configured.
+     Error: Jira MCP not configured. Team status requires Jira integration.
 
-     To use this feature, configure MCP integrations.
-     See documentation: docs/setup-jira-mcp.md or docs/setup-gitlab-mcp.md
+     See docs/setup-jira-mcp.md for configuration instructions.
 
      Showing local data only (team members and projects from configuration).
      ```
    - Skip to local data display (show team members and projects only)
    - Do not fetch task data
 
-   **If only Jira MCP is unavailable (GitLab available):**
-   - Display error message:
-     ```
-     Error: Jira MCP not configured. Team status requires Jira integration.
-
-     See docs/setup-jira-mcp.md for configuration instructions.
-     ```
-   - Exit the command (do not proceed)
-
    **If Jira MCP is available:**
    - Store Jira availability flag: `jira_mcp_available = true`
-   - Store GitLab availability flag: `gitlab_mcp_available = true/false`
+   - Store GitLab availability flag based on `glab` CLI check: `gitlab_cli_available = true/false`
    - Proceed to the next step
 
 **Error Handling:**
 - Jira MCP is REQUIRED for task status functionality
-- GitLab MCP is OPTIONAL and enhances the output
-- If neither is available, fall back to showing local team configuration data only
+- `glab` CLI is OPTIONAL and enhances the output with GitLab data
+- If Jira MCP is not available, fall back to showing local team configuration data only
 - Provide clear instructions pointing to the setup documentation
 
 ### Step 6: Load Team Members and Projects
@@ -493,25 +486,27 @@ Store the task list in a variable for the next step (table rendering):
   ]
   ```
 
-### Step 8: Query GitLab via MCP (Optional)
+### Step 8: Query GitLab via glab CLI (Optional)
 
-Fetch GitLab issues and merge requests if GitLab MCP is available.
+Fetch GitLab issues and merge requests if `glab` CLI is available.
 
 **Note:** This step occurs before merging and filtering. GitLab data will be combined with Jira data in Step 9.
 
 **Instructions:**
 
 1. **Check GitLab availability:**
-   - If `gitlab_mcp_available = false` (from Step 5):
+   - If `gitlab_cli_available = false` (from Step 5):
      - Display warning message:
        ```
-       Warning: GitLab MCP not configured. Showing Jira data only.
+       Note: glab CLI not configured. Showing Jira data only.
 
-       See docs/setup-gitlab-mcp.md for configuration instructions.
+       To enable GitLab integration:
+       - Install: brew install glab (macOS)
+       - Authenticate: glab auth login
        ```
      - Set `gitlab_tasks = []` (empty array)
      - Proceed to next step (Slack MCP check)
-   - If `gitlab_mcp_available = true`, proceed with GitLab queries
+   - If `gitlab_cli_available = true`, proceed with GitLab queries
 
 2. **Extract GitLab project IDs:**
    - From `projects.json` (loaded in Step 6)
@@ -527,22 +522,32 @@ Fetch GitLab issues and merge requests if GitLab MCP is available.
    - Create list of git emails for assignee queries
 
 3. **Query GitLab issues:**
-   - For each GitLab project ID: Call GitLab MCP `get_project_issues`
-     - Filter: `state = opened`
-     - Request fields: `iid`, `title`, `state`, `assignee`, `assignees`, `updated_at`, `description`
-   - For each git_email: Query issues assigned to that email
-     - Use GitLab MCP search/query functions for assignee filtering
-     - Filter: `state = opened`
+   - For each GitLab project ID, use `glab` CLI to fetch open issues:
+     ```bash
+     glab issue list --project <project-id> --state opened --per-page 100
+     ```
+   - For assignee filtering, use:
+     ```bash
+     glab issue list --assignee @me --state opened --per-page 100
+     # Or for specific users:
+     glab issue list --assignee <username> --state opened --per-page 100
+     ```
+   - Parse JSON output to extract: `iid`, `title`, `state`, `assignees`, `updated_at`, `description`
    - Combine results from both queries
    - Deduplicate by issue `iid` (remove duplicates if same issue appears multiple times)
 
 4. **Query GitLab merge requests:**
-   - For each GitLab project ID: Call GitLab MCP `get_project_merge_requests`
-     - Filter: `state = opened` (not merged or closed)
-     - Request fields: `iid`, `title`, `state`, `draft`, `work_in_progress`, `assignee`, `assignees`, `updated_at`, `description`
-   - For each git_email: Query MRs assigned to that email
-     - Use GitLab MCP search/query functions for assignee filtering
-     - Filter: `state = opened`
+   - For each GitLab project ID, use `glab` CLI to fetch open MRs:
+     ```bash
+     glab mr list --project <project-id> --state opened --per-page 100
+     ```
+   - For assignee filtering, use:
+     ```bash
+     glab mr list --assignee @me --state opened --per-page 100
+     # Or for specific users:
+     glab mr list --assignee <username> --state opened --per-page 100
+     ```
+   - Parse JSON output to extract: `iid`, `title`, `state`, `draft`, `work_in_progress`, `assignees`, `updated_at`, `description`
    - Include draft and work-in-progress MRs
    - Combine results from both queries
    - Deduplicate by MR `iid`
@@ -609,19 +614,19 @@ Fetch GitLab issues and merge requests if GitLab MCP is available.
    - Store as an array/list for merging with Jira tasks
 
 **Error Handling:**
-- **API rate limit (429):**
-  - Display warning: "API rate limit reached. Showing partial results from Jira only."
+- **API rate limit:**
+  - Display warning: "GitLab API rate limit reached. Showing partial results from Jira only."
   - Continue with Jira data (GitLab is optional)
   - Troubleshooting: Rate limits reset hourly. Wait and retry, or reduce query frequency.
-- **Authentication error (401):**
-  - Display warning: "GitLab authentication failed. Check your GitLab MCP credentials. Showing Jira data only."
+- **Authentication error:**
+  - Display warning: "GitLab authentication failed. Run 'glab auth login' to re-authenticate. Showing Jira data only."
   - Skip GitLab data, continue with Jira-only
-  - Troubleshooting: Verify personal access token is valid. Re-authenticate in MCP settings.
-- **Permission error (403):**
+  - Troubleshooting: Run `glab auth login` to re-authenticate with GitLab.
+- **Permission error:**
   - Display warning: "GitLab access denied. Your account lacks permission to view these projects. Showing Jira data only."
   - Skip GitLab data, continue with Jira-only
   - Troubleshooting: Contact GitLab administrator to grant project access.
-- **Server error (500, 502, 503):**
+- **Server error:**
   - Display warning: "GitLab server error. The GitLab service may be temporarily unavailable. Showing Jira data only."
   - Skip GitLab data, continue with Jira-only
   - Troubleshooting: Check GitLab status or try again later.
@@ -672,7 +677,7 @@ Store the GitLab task list in a variable:
   ```
 
 **Important Notes:**
-- Only run if `gitlab_mcp_available = true`
+- Only run if `gitlab_cli_available = true`
 - Prefix issue IDs with "#" and MR IDs with "!"
 - Handle cases where projects.json has no GitLab project IDs (assignee-only search is valid)
 - Handle cases where members.json has no git_email fields (project-only search is valid)
@@ -1669,7 +1674,7 @@ All commands should be run from the repository root. Team data is stored in `.te
 ### Data Sources
 
 - **Jira MCP** (required): Primary source for task status data
-- **GitLab MCP** (optional): Additional context for merge requests and pipeline status
+- **glab CLI** (optional): Additional context for merge requests and pipeline status from GitLab
 - **Slack MCP** (optional): Team communication and activity insights
 
 ### Output Format
